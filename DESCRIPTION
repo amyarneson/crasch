@@ -1,0 +1,29 @@
+Package: crasch
+Type: Package
+Title: Construct Mapping with Rasch
+Version: 0000.0000.9000
+Date: 2015-12-10
+Author: c(person("Amy","Arneson",email="aea@berkeley.edu",role=c("aut","cre")),
+    person("Rebecca","Freund",email="rlfreund@berkeley.edu",role="ctb"),
+    person("Mark","Wilson",email="markw@berkeley.edu",role="ctb"))
+Description: An organizational and analysis tool that faciliatates
+    implemenation of the Berkeley Assessment System, following that of
+    Wilson (2004). Provides user-friendly wrappers for Rasch model estimation
+    (performed by either mirt or TAM). Produces nicely formatted and readable
+    tables and graphics for those with little to no R-coding experience.
+License: MIT + file LICENSE
+LazyData: TRUE
+Depends:
+    WrightMap
+Imports:
+    mirt,
+    lme4,
+    sirt,
+    RColorBrewer,
+    Hmisc,
+    boot,
+    ltm
+Suggests:
+    TAM,
+    testthat
+RoxygenNote: 5.0.1
