@@ -2,3 +2,4 @@
 
 export(craschR)
 export(item.scores)
+export(pers.hist)

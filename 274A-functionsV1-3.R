@@ -378,33 +378,6 @@ split.halves <- function(data=wide,item.set1,item.set2,
 }
 
 ####################################################################################################
-# Make a histogram of the person distribution with a normal curve overlaid
-# requires Hmisc package
-
-pers.hist <- function(theta=pers.pars[complete.cases(pers.pars),1],mean.theta=pers.dist[1],
-                      var.theta=pers.dist[2],main=paste(C.Name,"Estimate Distribution"),
-                      col="#80b1d3",outfile="pershist",imgtype=Image.Type,writeout=Autosave) {
-  require(Hmisc)
-
-  h <- hist(theta,plot=FALSE)
-  x <- seq(min(theta),max(theta),length=200)
-  y <- dnorm(x,mean=mean.theta,sd=sqrt(var.theta)) * diff(h$mids[1:2]) * length(theta)
-
-  if (writeout) {
-    eval(parse(text=paste0(imgtype,"('",outfile,".",imgtype,"')")))
-  }
-  par(def.par)
-  hist(theta,
-       main=main,
-       xlab="Logits",col=col,freq=TRUE,axes=FALSE,ylim=c(0,max(max(y),max(h$counts))))
-  axis(1,at=c(seq(0,min(0,floor(min(theta))),by=-2),seq(2,max(2,ceiling(max(theta))),by=2)))
-  axis(1,at=c(seq(-1,min(-1,floor(min(theta))),by=-2),seq(1,max(1,ceiling(max(theta))),by=2)),labels=FALSE)
-  axis(2,las=1)
-  minor.tick(nx=1,ny=2,tick.ratio=1)
-  lines(x,y,col="gray",lty=2,lwd=2)
-  if (writeout) { dev.off() }
-}
-####################################################################################################
 # Mean ability trajetories (spaghetti plot / trellis plots)
 
 mean.traj <- function(BASSR.steps=item.analysis[[2]],

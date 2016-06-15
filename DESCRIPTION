@@ -14,12 +14,12 @@ Description: An organizational and analysis tool that faciliatates
 License: MIT + file LICENSE
 LazyData: TRUE
 Depends:
-    WrightMap
+    WrightMap,
+    RColorBrewer
 Imports:
     mirt,
     lme4,
     sirt,
-    RColorBrewer,
     Hmisc,
     boot,
     ltm

@@ -36,3 +36,18 @@ consecutive=TRUE
 writeout=FALSE
 
 # 2-dimensional post-est functions
+
+
+# today:
+ADP <- craschR(scores = ADPwide, itemInfo = ADPitem, consInfo = ADPcons,
+               varsInfo = ADPvars, estPackage = "TAM", retainOrig = TRUE,
+               consecutive = FALSE, writeout = FALSE)
+item.scores(ADP)
+item.scores(ADP, freqs = FALSE)
+pers.hist(ADP)
+
+AMY <- craschR(scores = AMYwide, itemInfo = AMYitem, consInfo = AMYcons,
+               varsInfo = AMYvars, estPackage = "TAM", retainOrig = TRUE,
+               consecutive = TRUE, writeout = FALSE)
+item.scores(AMY)
+pers.hist(AMY)

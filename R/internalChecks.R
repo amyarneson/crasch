@@ -96,8 +96,17 @@
 
   }
 
-###############################################################################
+################################################################################
 # check for items with no variability
   noVar <- function(data) {
     as.numeric(c(which(apply(data,2,function(x) length(unique(x))) == 1)))
   }
+
+################################################################################
+# check that inputs are colors
+areColors <- function(x) {
+  sapply(x, function(X) {
+    tryCatch(is.matrix(col2rgb(X)),
+             error = function(e) FALSE)
+  })
+}
