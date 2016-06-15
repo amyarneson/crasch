@@ -3,3 +3,4 @@
 export(craschR)
 export(item.scores)
 export(pers.hist)
+export(item.analysis)

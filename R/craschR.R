@@ -290,7 +290,7 @@ craschR <- function(scores, itemInfo = NULL, consInfo = NULL, varsInfo = NULL,
   }
 
   # empty categories (used in subsequent functions)
-  empties <- empty.cats(wide,
+  empties <- empty.cats(scoresOrig,
                         t(itemInfo[,6:ncol(itemInfo)]))
 
   # classical test statistics (one matrix for each dimension)
@@ -327,6 +327,8 @@ craschR <- function(scores, itemInfo = NULL, consInfo = NULL, varsInfo = NULL,
                 itemFit = itemFit,
                 persPars = persEsts$Pars,
                 persSEs = persEsts$SEs,
+                persRaw = persEsts$Raw,
+                persMax = persEsts$Max,
                 persFit = persFit,
                 popDist = list(mean = persMean,
                                var.cov = persVar),

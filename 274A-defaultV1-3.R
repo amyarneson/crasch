@@ -18,8 +18,6 @@ row.names(itemsXscores) = as.character(itemInfo$item.name)
 
 # graphic output and accompanying tables
 
-pers.hist()
-
 item.analysis = Rasch.itemanalysis()
 
 if (Autosave) { pdf("WM.pdf",width=min(14,I),height=7) }
