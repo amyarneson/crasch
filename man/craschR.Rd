@@ -93,6 +93,8 @@ A list with the following entries
   Notably, Cronbach's Alpha and person separation reliabilities are
   provided.  Statistics are calculated by recoding all missings to 0 as well
   as by only including complete cases.}
+  \item{empties} A list of vectors (1 per item) of the categories (if any)
+  that were deemed possible, but no one scored into them.
   \item{estResults}{If \code{retainOrig = TRUE}, this will contain the FULL
   output provided by the estimation package.  See the documentation for that
   package for full details.  Otherwise, this will be NULL.}
