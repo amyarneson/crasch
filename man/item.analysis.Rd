@@ -10,15 +10,17 @@ item.analysis(results, writeout = FALSE, filePrefix = NULL)
 \item{results}{The output from a run of \code{craschR}. (link?)}
 
 \item{writeout}{A logical indicated whether the estimate objects should be
-written to your working directory as CSVs.}
-
-\item{filePrefix}{A character string that will be affixed to the beginning
-of each file (if \code{writeout = TRUE}). Use this if you are conducting
-multiple analyses in the same working directory and do not wish for your
-existing files to be overwritten.}
+written to your working directory as CSVs.  If \code{TRUE}, two files will
+be produced, one beginning \code{item-byitem} and the other
+\code{item-bystep} with any specified \code{fileSuffix}.}
 
 \item{dim}{Specify which dimension(s) to create graphic/tables for.  If
 \code{NULL}, output and graphics for each dimension will be produced.}
+
+\item{fileSuffix}{A character string that will be affixed to the end of each
+file name (if \code{writeout = TRUE}). Use this if you are conducting
+multiple analyses in the same working directory and do not wish for your
+existing files to be overwritten.}
 }
 \value{
 A list with the following entries:

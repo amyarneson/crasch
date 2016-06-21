@@ -5,35 +5,38 @@
 \title{Create a histogram of person estimates.}
 \usage{
 pers.hist(results, dim = NULL, palette = "BASS", writeout = FALSE,
-  imageType = "pdf", filePrefix = NULL, ...)
+  imageType = "pdf", fileSuffix = NULL, ...)
 }
 \arguments{
 \item{results}{The output from a run of \code{craschR}. (link?)}
 
-\item{dim}{Specify which dimension(s) to create graphic/tables for.  If
-\code{NULL}, output and graphics for each dimension will be produced.}
+\item{dim}{A numeric vector that specifies for which dimension(s) to create
+graphic/tables.  If \code{NULL}, output and graphics for each dimension
+will be produced.}
 
 \item{palette}{The color scheme for the histogram. Can be "BASS or any
 RColorBrewer palette name (the first 2 colors of the 3-color palette will
 be used). Can also specify a vector with 2 colors in any R-supported form;
 the first color is for the bars and the second is for the normal curve.}
 
-\item{writeout}{A logical indicated whether the estimate objects should be
-written to your working directory as CSVs.}
+\item{writeout}{A logical indicating whether the graph should be written to
+your working directory as your indicated \code{imageType}.  If \code{TRUE},
+the file name will begin \code{pershist} and will include an index (if more
+than one graph is produced) and the \code{fileSuffix} if provided.}
 
 \item{imageType}{A character string indicating the format for graphics (if
 \code{writeout = TRUE}). Supported types:
 \code{c("pdf","svg","jpeg","bmp","tiff","png")}.}
 
-\item{filePrefix}{A character string that will be affixed to the beginning
-of each file (if \code{writeout = TRUE}). Use this if you are conducting
+\item{fileSuffix}{A character string that will be affixed to the end of each
+file name (if \code{writeout = TRUE}). Use this if you are conducting
 multiple analyses in the same working directory and do not wish for your
 existing files to be overwritten.}
 
 \item{...}{Additional arguments to be passed to \code{hist} function.}
 }
 \value{
-Plots a histogram
+Plots one histogram for each dimension.
 }
 \description{
 Create a histogram of person estimates.

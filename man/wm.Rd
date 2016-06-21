@@ -5,37 +5,40 @@
 \title{A wrapper for the wrightMap() function from the WrightMap package.}
 \usage{
 wm(results, dim = NULL, itemOrder = "item", palette = "BASS",
-  writeout = FALSE, imageType = "pdf", filePrefix = NULL)
+  writeout = FALSE, imageType = "pdf", fileSuffix = NULL)
 }
 \arguments{
 \item{results}{The output from a run of \code{craschR}. (link?)}
 
-\item{dim}{A numeric vector to specify which dimension(s) to create
-graphic/tables for.  If \code{NULL}, output and graphics for each dimension
+\item{dim}{A numeric vector that specifies for which dimension(s) to create
+graphic/tables.  If \code{NULL}, output and graphics for each dimension
 will be produced.}
 
 \item{itemOrder}{Can be "item", "construct", or a numeric vector.  If "item",
 items will be ordered as in \code{itemInfo}.  If "construct", items will
 be grouped by the levels of the construct.}
 
-\item{palette}{Color scheme.  Can be "BASS" (default) or any RColorBrewer
-palette.  If you want to customize further, the wrightMap() function should
-be used directly, not this wrapper.}
+\item{palette}{A character string indicating the color scheme.  Can be "BASS"
+or any RColorBrewer palette.  If you want to customize further, the
+\code{wrightMap()} function should be used directly, not this wrapper.}
 
-\item{writeout}{A logical indicated whether the estimate objects should be
-written to your working directory as CSVs.}
+\item{writeout}{A logical indicating whether the graphic should be written to
+to your working directory as your specified \code{imageType}.  If
+\code{TRUE}, the file name will begin \code{WM} and will include an index
+(if more than one graph is produced) and the \code{fileSuffix} if provided.}
 
 \item{imageType}{A character string indicating the format for graphics (if
 \code{writeout = TRUE}). Supported types:
 \code{c("pdf","svg","jpeg","bmp","tiff","png")}.}
 
-\item{filePrefix}{A character string that will be affixed to the beginning
-of each file (if \code{writeout = TRUE}). Use this if you are conducting
+\item{fileSuffix}{A character string that will be affixed to the end of each
+file name (if \code{writeout = TRUE}). Use this if you are conducting
 multiple analyses in the same working directory and do not wish for your
 existing files to be overwritten.}
 }
 \value{
-Wright Map graphic
+Wright Map graphic (multiple graphics will be produced if you have
+  more than one dimension and ran consecutive analyses)
 }
 \description{
 A wrapper for the wrightMap() function from the WrightMap package.

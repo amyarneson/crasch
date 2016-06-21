@@ -5,20 +5,22 @@
 #' @param dim Specify which dimension(s) to create graphic/tables for.  If
 #'   \code{NULL}, output and graphics for each dimension will be produced.
 #' @param writeout A logical indicated whether the estimate objects should be
-#'   written to your working directory as CSVs.
-#' @param filePrefix A character string that will be affixed to the beginning
-#'   of each file (if \code{writeout = TRUE}). Use this if you are conducting
+#'   written to your working directory as CSVs.  If \code{TRUE}, two files will
+#'   be produced, one beginning \code{item-byitem} and the other
+#'   \code{item-bystep} with any specified \code{fileSuffix}.
+#' @param fileSuffix A character string that will be affixed to the end of each
+#'   file name (if \code{writeout = TRUE}). Use this if you are conducting
 #'   multiple analyses in the same working directory and do not wish for your
 #'   existing files to be overwritten.
-#'   
+#'
 #' @return A list with the following entries:
 #'   \item{byItem}{A matrix with classical statistics and descriptives by item.}
 #'   \item{byStep}{A matrix with classical statistics and descriptives by step.}
-#' 
+#'
 #' @export
 
 item.analysis <- function(results, writeout = FALSE, filePrefix= NULL) {
-  
+
   # create the byItem table (for TAM output)
   # note that the item name will be the row name
   byItem = cbind(Item_no = 1:results$estSummary$I,
@@ -30,26 +32,26 @@ item.analysis <- function(results, writeout = FALSE, filePrefix= NULL) {
                  SE_est = results$itemSEs[,1],
                  results$itemFit[1:nrow(results$itemPars), c(2:4,6:8)]
   )
-  
+
   #persProp table needed for point biserials
   persProp = results$persRaw / results$persMax
-  
+
   #byStep table for PCM
   if (ncol(results$itemThres) > 1) {
     K_total = sum(colSums(results$itemInfo[,6:ncol(results$itemInfo)]))
-    byStep = data.frame(Item = vector(mode = "character", length = K_total), 
+    byStep = data.frame(Item = vector(mode = "character", length = K_total),
                         Construct = vector(mode = "character", length = K_total),
-                        Cat = vector(mode = "character", length = K_total), 
-                        Count = as.vector(rep(NA, K_total), mode = "numeric"), 
+                        Cat = vector(mode = "character", length = K_total),
+                        Count = as.vector(rep(NA, K_total), mode = "numeric"),
                         Score = as.vector(rep(NA, K_total), mode = "numeric"),
-                        Estimate = as.vector(rep(NA, K_total), mode = "numeric"), 
-                        SE_est = as.vector(rep(NA, K_total), mode = "numeric"), 
-                        Threshold = as.vector(rep(NA, K_total), mode = "numeric"), 
+                        Estimate = as.vector(rep(NA, K_total), mode = "numeric"),
+                        SE_est = as.vector(rep(NA, K_total), mode = "numeric"),
+                        Threshold = as.vector(rep(NA, K_total), mode = "numeric"),
                         PtBiserial = as.vector(rep(NA, K_total), mode = "numeric"),
-                        MeanPersLoc = as.vector(rep(NA, K_total), mode = "numeric"), 
+                        MeanPersLoc = as.vector(rep(NA, K_total), mode = "numeric"),
                         SD_PersLoc = as.vector(rep(NA, K_total), mode = "numeric"),
                         stringsAsFactors = FALSE)
-    
+
     start <- 1
     for (i in 1:results$estSummary$I) {
       cons = which(results$consInfo$cons.ID == results$itemInfo$cons.ID[i]) # row index
@@ -81,32 +83,32 @@ item.analysis <- function(results, writeout = FALSE, filePrefix= NULL) {
         })
       # person locations
         byStep$MeanPersLoc[fill] = sapply(fill,function(x) {
-          mean(results$persPars[results$scoresRecoded[!is.na(results$scoresRecoded[,i]), i] == byStep$Score[x], cons], 
+          mean(results$persPars[results$scoresRecoded[!is.na(results$scoresRecoded[,i]), i] == byStep$Score[x], cons],
                na.rm = TRUE)
         })
         byStep$SD_PersLoc[fill] = sapply(fill,function(x) {
           sd(results$persPars[results$scoresRecoded[!is.na(results$scoresRecoded[,i]), i] == byStep$Score[x], cons],
              na.rm = TRUE)
         })
-        
+
         start = start + K_i
     }
   } else if (ncol(results$itemThres == 1)) {
       # create the byStep table (for dichotomous items)
       K_total = 2 * results$estSummary$I
-      byStep = data.frame(Item = vector(mode = "character", length = K_total), 
+      byStep = data.frame(Item = vector(mode = "character", length = K_total),
                           Construct = vector(mode = "character", length = K_total),
-                          Cat = vector(mode = "character", length = K_total), 
-                          Count = as.vector(rep(NA, K_total), mode = "numeric"), 
+                          Cat = vector(mode = "character", length = K_total),
+                          Count = as.vector(rep(NA, K_total), mode = "numeric"),
                           Score = as.vector(rep(NA, K_total), mode = "numeric"),
-                          Estimate = as.vector(rep(NA, K_total), mode = "numeric"), 
-                          SE_est = as.vector(rep(NA, K_total), mode = "numeric"), 
-                          Threshold = as.vector(rep(NA, K_total), mode = "numeric"), 
+                          Estimate = as.vector(rep(NA, K_total), mode = "numeric"),
+                          SE_est = as.vector(rep(NA, K_total), mode = "numeric"),
+                          Threshold = as.vector(rep(NA, K_total), mode = "numeric"),
                           PtBiserial = as.vector(rep(NA, K_total), mode = "numeric"),
-                          MeanPersLoc = as.vector(rep(NA, K_total), mode = "numeric"), 
+                          MeanPersLoc = as.vector(rep(NA, K_total), mode = "numeric"),
                           SD_PersLoc = as.vector(rep(NA, K_total), mode = "numeric"),
                           stringsAsFactors = FALSE)
-      
+
       for(i in 1:results$estSummary$I) {
         fill = c(2*i - 1, 2*i)
         # item and category names
@@ -130,7 +132,7 @@ item.analysis <- function(results, writeout = FALSE, filePrefix= NULL) {
           })
         # person locations
           byStep$MeanPersLoc[fill] = sapply(fill,function(x) {
-            mean(results$persPars[results$scoresRecoded[!is.na(results$scoresRecoded[,i]), i] == byStep$Score[x], cons], 
+            mean(results$persPars[results$scoresRecoded[!is.na(results$scoresRecoded[,i]), i] == byStep$Score[x], cons],
                  na.rm = TRUE)
           })
           byStep$SD_PersLoc[fill] = sapply(fill,function(x) {
@@ -140,11 +142,11 @@ item.analysis <- function(results, writeout = FALSE, filePrefix= NULL) {
 
       }
     }
-  
+
   if(writeout) {
-    write.csv(byItem, paste0(filePrefix,"item-byitem.csv"))
-    write.csv(byStep, paste0(filePrefix,"item-bystep.csv"))
+    write.csv(byItem, paste0("item-byitem", fileSuffix, ".csv"))
+    write.csv(byStep, paste0("item-bystep", fileSuffix, ".csv"))
   }
-  
+
   list(byItem,byStep)
 }

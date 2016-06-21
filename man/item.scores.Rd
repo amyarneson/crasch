@@ -10,27 +10,32 @@ item.scores(results, dim = NULL, freqs = TRUE, palette = "Set3",
 \arguments{
 \item{results}{The output from a run of \code{craschR}. (link?)}
 
-\item{dim}{Specify which dimension(s) to create graphic/tables for.  If
-\code{NULL}, output and graphics for each dimension will be produced.}
+\item{dim}{A numeric vector that specifies for which dimension(s) to create
+graphic/tables.  If \code{NULL}, output and graphics for each dimension
+will be produced.}
 
 \item{freqs}{A logical indicated whether frequencies or raw counts should be
 graphed.}
 
-\item{palette}{Can be "blue", "grey", or any RColorBrewer palette string.}
+\item{palette}{A character string indicating the color scheme for the graph.
+Can be "BASS", "grey", or any RColorBrewer palette string.}
 
-\item{writeout}{A logical indicated whether the estimate objects should be
-written to your working directory as CSVs.}
+\item{writeout}{A logical indicating whether the graphics/tables should be
+written to to your working directory as your specified \code{imageType} and
+CSVs.  If \code{TRUE}, the file name will begin \code{itemscores} and will
+include an index (if more than one graph is produced) and the
+\code{fileSuffix} if provided.}
 
 \item{imageType}{A character string indicating the format for graphics (if
 \code{writeout = TRUE}). Supported types:
 \code{c("pdf","svg","jpeg","bmp","tiff","png")}.}
 
-\item{filePrefix}{A character string that will be affixed to the beginning
-of each file (if \code{writeout = TRUE}). Use this if you are conducting
+\item{...}{Additional arguments to be passed to \code{barplot} function.}
+
+\item{fileSuffix}{A character string that will be affixed to the end of each
+file name (if \code{writeout = TRUE}). Use this if you are conducting
 multiple analyses in the same working directory and do not wish for your
 existing files to be overwritten.}
-
-\item{...}{Additional arguments to be passed to \code{barplot} function.}
 }
 \value{
 Creates a stacked bar plot and returns a list with the following

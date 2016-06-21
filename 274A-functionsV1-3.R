@@ -267,58 +267,6 @@ CPC.graph <- function(data=wide,all.thres=thresholds,theta=pers.pars[,1],
   }
 }
 
-####################################################################################################
-# Item Characteristic Curves
-
-ICC.graph <- function(all.thres=thresholds,items=row.names(thresholds),col="bright",
-                      outfile="ICC",imgtype=Image.Type,writeout=Autosave) {
-  require(RColorBrewer)
-
-  for (i in 1:nrow(all.thres)) {
-    item.thres = all.thres[i,!is.na(all.thres[i,])]
-    item.name = items[i]
-    cat.names = as.character(t(cons.info[item.info$Construct.ID[i]==cons.info$Construct.ID,
-                                         which(item.info[i,6:ncol(item.info)]==1)+4]))
-    if (length(empties[[i]])>0){
-      cat.names = cat.names[-which(cat.names %in% empties[[i]])]
-    }
-
-    K = length(item.thres)
-    thres = c(-Inf,item.thres,Inf)
-
-    if (col=="bright9") { color = brewer.pal(max(3,K+1),"Set1") }
-    if (col=="pastel") { color = brewer.pal(max(3,K+1),"Set3") }
-    if (col=="bright") { color = brewer.pal(max(3,K+1),"Paired") }
-    if (col=="blue") { color = rev(brewer.pal(max(3,K+1),"PuBu")) }
-    if (col=="gray") { color = gray(level=seq(from=0,to=.5,length.out=K+1)) }
-    lty = rep(1:4,ceiling((K+1)/4))
-    length(lty) = K+1
-
-    if (writeout) {
-      eval(parse(text=paste0(imgtype,"('",outfile,i,".",imgtype,"')")))
-    }
-
-    par(def.par)
-    layout(matrix(1,nrow=1))
-    plot(1,type="n",xlim=c(-6,6),ylim=c(0,1),axes=FALSE,xlab="Logits",ylab="Probability",
-         main="Category Characteristic Curves")
-    mtext(as.character(item.name))
-    axis(1,at=seq(-6,6,2))
-    axis(1,at=seq(-5,5,2),labels=FALSE)
-    axis(2,at=seq(0,1,.2),las=1)
-    axis(2,at=seq(.1,.9,.2),labels=FALSE)
-
-    for (k in 0:K) {
-      curve(inv.logit(x-thres[k+1])-inv.logit(x-thres[k+2]),from=-6,to=6,add=TRUE,
-            lwd=2,lty=lty[k+1],col=color[k+1])
-    }
-
-    par(xpd=TRUE)
-    legend(-6,.7,cat.names,lty=lty,lwd=2,col=color,cex=.6)
-
-    if (writeout) { dev.off() }
-  }
-}
 
 ####################################################################################################
 # Return the split-halves reliability coefficient

@@ -2,18 +2,23 @@
 #' Create a stacked bar graph showing score level frequencies per item.
 #'
 #' @param results The output from a run of \code{craschR}. (link?)
-#' @param dim Specify which dimension(s) to create graphic/tables for.  If
-#'   \code{NULL}, output and graphics for each dimension will be produced.
+#' @param dim A numeric vector that specifies for which dimension(s) to create
+#'   graphic/tables.  If \code{NULL}, output and graphics for each dimension
+#'   will be produced.
 #' @param freqs A logical indicated whether frequencies or raw counts should be
 #'   graphed.
-#' @param palette Can be "blue", "grey", or any RColorBrewer palette string.
-#' @param writeout A logical indicated whether the estimate objects should be
-#'   written to your working directory as CSVs.
+#' @param palette A character string indicating the color scheme for the graph.
+#'   Can be "BASS", "grey", or any RColorBrewer palette string.
+#' @param writeout A logical indicating whether the graphics/tables should be
+#'   written to to your working directory as your specified \code{imageType} and
+#'   CSVs.  If \code{TRUE}, the file name will begin \code{itemscores} and will
+#'   include an index (if more than one graph is produced) and the
+#'   \code{fileSuffix} if provided.
 #' @param imageType A character string indicating the format for graphics (if
 #'   \code{writeout = TRUE}). Supported types:
 #'   \code{c("pdf","svg","jpeg","bmp","tiff","png")}.
-#' @param filePrefix A character string that will be affixed to the beginning
-#'   of each file (if \code{writeout = TRUE}). Use this if you are conducting
+#' @param fileSuffix A character string that will be affixed to the end of each
+#'   file name (if \code{writeout = TRUE}). Use this if you are conducting
 #'   multiple analyses in the same working directory and do not wish for your
 #'   existing files to be overwritten.
 #' @param ... Additional arguments to be passed to \code{barplot} function.
@@ -75,7 +80,7 @@ item.scores <- function(results, dim = NULL, freqs = TRUE, palette = "Set3",
       }
     } else if ( palette == "grey" ) {
       color = gray(level = rev(1:nrow(tograph)/nrow(tograph)))
-    } else if ( palette == "blue" ) {
+    } else if ( palette == "BASS" ) {
       color = rainbow(n = nrow(tograph), start = 4/6, end = 4/6+.001,
                       alpha = seq(.3,.9,length.out = nrow(tograph)))
     } else {
@@ -95,10 +100,10 @@ item.scores <- function(results, dim = NULL, freqs = TRUE, palette = "Set3",
       if (D==1) {
         dd = NULL
       } else {
-        dd = cons$short.name
+        dd = d
       }
-      graphout = paste0(filePrefix,dd,"-itemscores",".",imageType)
-      tableout = paste0(filePrefix,dd,"-itemscores",".csv")
+      graphout = paste0("itemscores", dd, fileSuffix, ".", imageType)
+      tableout = paste0("itemscores", dd, fileSuffix, ".csv")
       write.table(table.temp[[1]],tableout,sep=",",col.names=NA)
                   blankrow = c("Proportions",rep("",ncol(table.temp[[1]])-1))
                   write.table("Proportions",tableout,sep=",",append=TRUE,col.names=FALSE)

@@ -2,29 +2,32 @@
 #' Create a histogram of person estimates.
 #'
 #' @param results The output from a run of \code{craschR}. (link?)
-#' @param dim Specify which dimension(s) to create graphic/tables for.  If
-#'   \code{NULL}, output and graphics for each dimension will be produced.
+#' @param dim A numeric vector that specifies for which dimension(s) to create
+#'   graphic/tables.  If \code{NULL}, output and graphics for each dimension
+#'   will be produced.
 #' @param palette The color scheme for the histogram. Can be "BASS or any
 #'   RColorBrewer palette name (the first 2 colors of the 3-color palette will
 #'   be used). Can also specify a vector with 2 colors in any R-supported form;
 #'   the first color is for the bars and the second is for the normal curve.
-#' @param writeout A logical indicated whether the estimate objects should be
-#'   written to your working directory as CSVs.
+#' @param writeout A logical indicating whether the graph should be written to
+#'   your working directory as your indicated \code{imageType}.  If \code{TRUE},
+#'   the file name will begin \code{pershist} and will include an index (if more
+#'   than one graph is produced) and the \code{fileSuffix} if provided.
 #' @param imageType A character string indicating the format for graphics (if
 #'   \code{writeout = TRUE}). Supported types:
 #'   \code{c("pdf","svg","jpeg","bmp","tiff","png")}.
-#' @param filePrefix A character string that will be affixed to the beginning
-#'   of each file (if \code{writeout = TRUE}). Use this if you are conducting
+#' @param fileSuffix A character string that will be affixed to the end of each
+#'   file name (if \code{writeout = TRUE}). Use this if you are conducting
 #'   multiple analyses in the same working directory and do not wish for your
 #'   existing files to be overwritten.
 #' @param ... Additional arguments to be passed to \code{hist} function.
 #'
-#' @return Plots a histogram
+#' @return Plots one histogram for each dimension.
 #'
 #' @export
 
 pers.hist <- function(results, dim = NULL, palette = "BASS",
-                      writeout = FALSE, imageType = "pdf", filePrefix = NULL,
+                      writeout = FALSE, imageType = "pdf", fileSuffix = NULL,
                       ...) {
   origPar = par(no.readonly = TRUE) # to reset graphical parameters after
   if (palette == "BASS") {
@@ -59,9 +62,9 @@ pers.hist <- function(results, dim = NULL, palette = "BASS",
       if (D==1) {
         dd = NULL
       } else {
-        dd = paste0(results$consInfo$short.name[d], "-")
+        dd = d
       }
-      graphout = paste0(filePrefix, dd, "itemscores.", imageType)
+      graphout = paste0("pershist", dd, fileSuffix, ".", imageType)
       eval(parse(text=paste0(imageType,"('",graphout,"')")))
     }
 
@@ -91,31 +94,34 @@ pers.hist <- function(results, dim = NULL, palette = "BASS",
 #' A wrapper for the wrightMap() function from the WrightMap package.
 #'
 #' @param results The output from a run of \code{craschR}. (link?)
-#' @param dim A numeric vector to specify which dimension(s) to create
-#'   graphic/tables for.  If \code{NULL}, output and graphics for each dimension
+#' @param dim A numeric vector that specifies for which dimension(s) to create
+#'   graphic/tables.  If \code{NULL}, output and graphics for each dimension
 #'   will be produced.
 #' @param itemOrder Can be "item", "construct", or a numeric vector.  If "item",
 #'   items will be ordered as in \code{itemInfo}.  If "construct", items will
 #'   be grouped by the levels of the construct.
-#' @param palette Color scheme.  Can be "BASS" (default) or any RColorBrewer
-#'   palette.  If you want to customize further, the wrightMap() function should
-#'   be used directly, not this wrapper.
-#' @param writeout A logical indicated whether the estimate objects should be
-#'   written to your working directory as CSVs.
+#' @param palette A character string indicating the color scheme.  Can be "BASS"
+#'   or any RColorBrewer palette.  If you want to customize further, the
+#'   \code{wrightMap()} function should be used directly, not this wrapper.
+#' @param writeout A logical indicating whether the graphic should be written to
+#'   to your working directory as your specified \code{imageType}.  If
+#'   \code{TRUE}, the file name will begin \code{WM} and will include an index
+#'   (if more than one graph is produced) and the \code{fileSuffix} if provided.
 #' @param imageType A character string indicating the format for graphics (if
 #'   \code{writeout = TRUE}). Supported types:
 #'   \code{c("pdf","svg","jpeg","bmp","tiff","png")}.
-#' @param filePrefix A character string that will be affixed to the beginning
-#'   of each file (if \code{writeout = TRUE}). Use this if you are conducting
+#' @param fileSuffix A character string that will be affixed to the end of each
+#'   file name (if \code{writeout = TRUE}). Use this if you are conducting
 #'   multiple analyses in the same working directory and do not wish for your
 #'   existing files to be overwritten.
 #'
-#' @return Wright Map graphic
+#' @return Wright Map graphic (multiple graphics will be produced if you have
+#'   more than one dimension and ran consecutive analyses)
 #'
 #' @export
 
 wm <- function(results, dim = NULL, itemOrder = "item", palette = "BASS",
-               writeout = FALSE, imageType = "pdf", filePrefix = NULL) {
+               writeout = FALSE, imageType = "pdf", fileSuffix = NULL) {
   origPar = par(no.readonly = TRUE) # to reset graphical parameters after
 
   # if itemOrder=="construct", then the WMs MUST be consecutive (1 for each dim)
@@ -223,8 +229,8 @@ wm <- function(results, dim = NULL, itemOrder = "item", palette = "BASS",
         index <- D[i]
       }
 
-      eval(parse(text = paste0(imageType, "('", filePrefix, "WM", fileName,
-                               index, ".", imageType, "', width = ", imgWidth,
+      eval(parse(text = paste0(imageType, "('WM", fileName, index, fileSuffix,
+                               ".", imageType, "', width = ", imgWidth,
                                " , height = 7)")))
     }
 
@@ -244,6 +250,107 @@ wm <- function(results, dim = NULL, itemOrder = "item", palette = "BASS",
 
     if (writeout) {
       dev.off()
+    }
+  }
+
+  par(origPar)
+}
+
+
+################################################################################
+#' Plots the item characteristic curves (or category characteristic curves, if
+#' polytomous) from \code{craschR} output.
+#'
+#' @param results The output from a run of \code{craschR}. (link?)
+#' @param itemOrder A numeric vector that specifies which items from the output
+#'   should be graphed.  If \code{NULL}, all items will be graphed.
+#' @param palette A character string indicating the color scheme.  Can be
+#'   "BASS", any RColorBrewer palette, or a vector containing 3 colors.
+#' @param writeout A logical indicating whether the graphic should be written to
+#'   to your working directory as your specified \code{imageType}.  If
+#'   \code{TRUE}, the file name will begin \code{ICC}, an index, and the
+#'   \code{fileSuffix} if provided.
+#' @param imageType A character string indicating the format for graphics (if
+#'   \code{writeout = TRUE}). Supported types:
+#'   \code{c("pdf","svg","jpeg","bmp","tiff","png")}.
+#' @param fileSuffix A character string that will be affixed to the end of each
+#'   file name (if \code{writeout = TRUE}). Use this if you are conducting
+#'   multiple analyses in the same working directory and do not wish for your
+#'   existing files to be overwritten.
+#'
+#' @return One plot for each item is created.
+#'
+#' @export
+
+ICC.graph <- function(results, itemOrder = NULL, palette = "BASS",
+                      writeout = FALSE, imageType = "pdf", fileSuffix = NULL) {
+  origPar = par(no.readonly = TRUE) # to reset graphical parameters after
+
+  if (is.null(itemOrder)) {
+    itemInfo <- results$itemInfo
+    itemThres <- results$itemThres
+  } else if (is.numeric(itemOrder)) {
+    itemInfo <- results$itemInfo[itemOrder,]
+    itemThres <- results$itemThres[itemOrder,]
+  } else {
+    stop('itemOrder must be a numeric vector or NULL.')
+  }
+  I <- nrow(itemInfo)
+  lty <- rep(1:4, 3)  # no items with >12 categories will be graphed
+
+  if (palette == "BASS") {
+    color <- rep(c("#80b1d3", "darkgoldenrod1", "gray52"),4)
+  } else if (palette %in% row.names(brewer.pal.info)) {
+    color <- rep(brewer.pal(3, palette), 4)
+  } else if (all(areColors(palette)) & length(palette)==3) {
+    color <- rep(palette, 4)
+  } else {
+    stop('palette must be "BASS", an RColorBrewer palette, or a character with 3 valid color specifications.')
+  }
+
+  for (i in 1:I) {
+    K_i <- sum(!is.na(itemThres[i,]))
+    if (K_i > 12) {
+      warning("Item ", i, " not graphed. Too many categories.")
+    } else {
+      thres <- c(-Inf, itemThres[i, !is.na(itemThres[i,])], Inf)
+
+      if (writeout) {
+        eval(parse(text = paste0(imageType, "('ICC", itemInfo$item.ID[i],
+                                 fileSuffix, ".", imageType, "')")))
+      }
+      layout(matrix(1))
+      par(mai = c(1.36, 1.093333, 1.093333, 0.56), mar = c(5.1, 4.1, 4.1, 2.1))
+
+      plot(1, type = "n", xlim = c(-6, 6), ylim = c(0, 1), axes = FALSE,
+           xlab = "Logits", ylab = "Probability", main="Category Characteristic Curves")
+      mtext(as.character(itemInfo$item.name[i]))
+      axis(1, at = seq(-6, 6, 2))
+      axis(1, at = seq(-5, 5, 2), labels = FALSE)
+      axis(2, at = seq(0, 1, .2), las = 1)
+      axis(2, at = seq(.1, .9, .2), labels = FALSE)
+
+      for (k in 0:K_i) {
+        curve(boot::inv.logit(x - thres[k + 1]) - boot::inv.logit(x - thres[k + 2]),
+              from = -6, to = 6, add = TRUE, lwd = 2, lty = lty[k + 1],
+              col = color[k + 1])
+      }
+
+      cats <- as.logical(itemInfo[i, 6:ncol(itemInfo)])
+      # deal with empty categories
+      if (length(results$empties[[i]]) > 0) {
+        cats[results$empties[[i]]] = FALSE
+      }
+
+      par(xpd = TRUE)
+      legend(-6, .7, as.character(
+        results$consInfo[which(results$consInfo$cons.ID == itemInfo$cons.ID[i]),
+                         4:ncol(results$consInfo)])[cats], lty = lty, lwd = 2,
+        col = color, cex = .6)
+
+      if (writeout) {
+        dev.off()
+      }
     }
   }
 

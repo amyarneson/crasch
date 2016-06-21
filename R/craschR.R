@@ -30,9 +30,11 @@
 #'   constrained to be 0. If \code{FALSE}, multidimensional analysis that
 #'   allows non-zero correlations among dimensions will be conducted.
 #' @param writeout A logical indicated whether the estimate objects should be
-#'   written to your working directory as CSVs.
-#' @param filePrefix A character string that will be affixed to the beginning
-#'   of each file (if \code{writeout = TRUE}). Use this if you are conducting
+#'   written to your working directory as CSVs.  See Return below for the names
+#'   of each file produced.  Each will also include any \code{fileSuffix} that
+#'   you specify.
+#' @param fileSuffix A character string that will be affixed to the end of each
+#'   file name (if \code{writeout = TRUE}). Use this if you are conducting
 #'   multiple analyses in the same working directory and do not wish for your
 #'   existing files to be overwritten.
 #' @param ... Further arguments to be passed to \code{mirt()},
@@ -44,33 +46,38 @@
 #'   \code{estPackage = "mirt"}, this matrix will be...
 #'   \code{estPackage = "TAM"}, this matrix will be in the ConQuest
 #'   parameterization with an overall item `delta' and step `tau's.}
+#'   (\code{itemGrid.csv})
 #'   \item{itemSEs}{A matrix with the standard error estimates corresponding to
-#'   the estimates given in \code{itemPars}.}
+#'   the estimates given in \code{itemPars}.} (\code{itemGrid.csv})
 #'   \item{itemThres}{A matrix giving the Thurstonian threshold estimates.}
+#'   (\code{itemGrid.csv})
 #'   \item{itemFit}{A data frame providing the fit statistics for items and
-#'   steps.}
+#'   steps.} (\code{itemFit.csv})
 #'   \item{persPars}{A data frame containing estimates for person locations for
-#'   each dimension.}
+#'   each dimension.} (\code{persGrid.csv})
 #'   \item{persSEs}{A data frame with standard errors for person estimates.}
+#'   (\code{persGrid.csv})
 #'   \item{persFit}{If non-consecutive (including unidimensional) analysis is
 #'   performed, this will be a data frame with person fit statistics.  If
 #'   `consecutive' multidimensional analysis is performed (independent analysis
 #'   of each dimension), this will be a list with fit statistics for each
 #'   dimension.  True multidimensional fit statistics are not available if
 #'   \code{TAM} is used.  See details for how these are produced.}
+#'   (\code{persFit.csv})
 #'   \item{popDist}{A list containing a vector of estimated population means
 #'   for each dimension (often these are constrained to be 0) and a variance-
 #'   covariance matrix.  Variances appear on the diagonal, covariances
 #'   elsewhere.  `Consecutive' analyses fix all covariances to 0.}
+#'   (\code{popDist.csv})
 #'   \item{sepRel}{A vector containing the separation reliabilities for each
-#'   dimension.}
+#'   dimension.} (\code{classicalStats.csv})
 #'   \item{estSummary}{A list containing information about the estimation
 #'   settings and model fit.  Use the \code{names()} function to see what is
-#'   provided here.}
+#'   provided here.} (\code{estSummary.csv})
 #'   \item{classicalStats}{A list containing information about each dimension.
 #'   Notably, Cronbach's Alpha and person separation reliabilities are
 #'   provided.  Statistics are calculated by recoding all missings to 0 as well
-#'   as by only including complete cases.}
+#'   as by only including complete cases.} (\code{classicalStats.csv})
 #'   \item{empties} A list of vectors (1 per item) of the categories (if any)
 #'   that were deemed possible, but no one scored into them.
 #'   \item{estResults}{If \code{retainOrig = TRUE}, this will contain the FULL
@@ -93,7 +100,7 @@ craschR <- function(scores, itemInfo = NULL, consInfo = NULL, varsInfo = NULL,
                     estPackage="mirt", retainOrig = FALSE,
                     missingAs0 = FALSE, longFormat = FALSE,
                     persMethod = "EAP", consecutive = FALSE,
-                    writeout = TRUE, imageType = "pdf", filePrefix = NULL, ...) {
+                    writeout = TRUE, imageType = "pdf", fileSuffix = NULL, ...) {
 
   # if files are supplied for scores,itemInfo,consInfo,varsInfo:
   if ( is.character(scores) ) {
@@ -308,13 +315,13 @@ craschR <- function(scores, itemInfo = NULL, consInfo = NULL, varsInfo = NULL,
                     missingDataPerc = sum(is.na(wide))/prod(dim(wide))*100)
 
   if ( writeout ) {
-    write.csv(cbind(itemEsts$Pars,itemEsts$SEs,itemEsts$Thres),paste0(filePrefix,"itemGrid.csv"))
-    write.csv(cbind(persEsts$Pars,persEsts$SEs,raw=persEsts$Raw,max=persEsts$Max),paste0(filePrefix,"persGrid.csv"))
-    write.csv(itemFit,paste0(filePrefix,"itemFit.csv"))
-    write.csv(persFit,paste0(filePrefix,"persFit.csv"))
-    write.csv(rbind(persVar,persMean),paste0(filePrefix,"popDist.csv"))
-    write.csv(classicalStats,paste0(filePrefix,"classicalStats.csv"))
-    write.csv(as.matrix(estSummary),paste0(filePrefix,"estSummary.csv"))
+    write.csv(cbind(itemEsts$Pars,itemEsts$SEs,itemEsts$Thres),paste0("itemGrid", fileSuffix, ".csv"))
+    write.csv(cbind(persEsts$Pars,persEsts$SEs,raw=persEsts$Raw,max=persEsts$Max),paste0("persGrid", fileSuffix, ".csv"))
+    write.csv(itemFit,paste0("itemFit", fileSuffix, ".csv"))
+    write.csv(persFit,paste0("persFit", fileSuffix, ".csv"))
+    write.csv(rbind(persVar,persMean),paste0("popDist", fileSuffix, ".csv"))
+    write.csv(classicalStats,paste0("classicalStats", fileSuffix, ".csv"))
+    write.csv(as.matrix(estSummary),paste0("estSummary", fileSuffix, ".csv"))
     # organize empty category info into readable table
       # include item number, name, construct, names of empty cats
       # only include items with empty cats
