@@ -55,3 +55,6 @@ wm(AMY)
 wm(AMY, itemOrder = "construct")
 wm(AMY, itemOrder = 1:4) # errors/warnings -- look into this next time!
 ICC.graph(AMY)
+CPC.graph(AMY)
+CPC.graph(AMY, observed = TRUE, palette = "PuBu")
+

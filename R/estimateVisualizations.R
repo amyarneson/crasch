@@ -356,3 +356,157 @@ ICC.graph <- function(results, itemOrder = NULL, palette = "BASS",
 
   par(origPar)
 }
+
+
+################################################################################
+#' Plots the cumulative probability curves from \code{craschR} output.
+#'
+#' @param results The output from a run of \code{craschR}. (link?)
+#' @param itemOrder A numeric vector that specifies which items from the output
+#'   should be graphed.  If \code{NULL}, all items will be graphed.
+#' @param palette A character string indicating the color scheme.  Can be
+#'   "BASS", any RColorBrewer palette, or a vector containing 3 colors.
+#' @param observed A logical indicating whether or not the observed proportions
+#'   should be graphed as points along with the curve.
+#' @param minCell A positive integer indicating the smallest cell value to plot
+#'   an observed proportion.  Only applies if \code{observed=TRUE}.
+#' @param focusTheta A numeric vector indicating at which logit values to plot
+#'   a vertical line and print the probabilities for each category.  Only
+#'   applies if \code{observed=FALSE}.
+#' @param writeout A logical indicating whether the graphic should be written to
+#'   to your working directory as your specified \code{imageType}.  If
+#'   \code{TRUE}, the file name will begin \code{CPC}, an index, and the
+#'   \code{fileSuffix} if provided.
+#' @param imageType A character string indicating the format for graphics (if
+#'   \code{writeout = TRUE}). Supported types:
+#'   \code{c("pdf","svg","jpeg","bmp","tiff","png")}.
+#' @param fileSuffix A character string that will be affixed to the end of each
+#'   file name (if \code{writeout = TRUE}). Use this if you are conducting
+#'   multiple analyses in the same working directory and do not wish for your
+#'   existing files to be overwritten.
+#'
+#' @return One plot for each item is created.
+#'
+#' @export
+
+CPC.graph <- function(results, itemOrder = NULL, palette = "BASS",
+                      observed = FALSE, minCell = 8, focusTheta = c(-2,0,2),
+                      writeout = FALSE, imageType = "pdf", fileSuffix = NULL) {
+  origPar = par(no.readonly = TRUE) # to reset graphical parameters after
+
+  if (is.null(itemOrder)) {
+    itemInfo <- results$itemInfo
+    itemThres <- results$itemThres
+  } else if (is.numeric(itemOrder)) {
+    itemInfo <- results$itemInfo[itemOrder,]
+    itemThres <- results$itemThres[itemOrder,]
+  } else {
+    stop('itemOrder must be a numeric vector or NULL.')
+  }
+  I <- nrow(itemInfo)
+
+  for (i in 1:I) {
+    K_i <- sum(!is.na(itemThres[i,]))
+    thres <- c(itemThres[i, !is.na(itemThres[i,])], Inf)
+
+    if (palette == "BASS") {
+      if (K_i == 2) {
+        color = rgb(red = 128, green = 177, blue = 211, alpha = c(140,255),
+                    maxColorValue = 255)
+      } else {
+        color = rgb(red = 128, green = 177, blue = 211,
+                    alpha = seq(80, 255, length.out = K_i), maxColorValue = 255)
+      }
+      fillcol = "#80b1d3"
+    } else if (palette %in% row.names(brewer.pal.info)) {
+      color <- brewer.pal(max(K_i,3), palette)
+      fillcol = "white"
+    } else if (palette == "grey" | palette == "gray") {
+      if (K_i == 2) {
+        color = gray(level = c(.75, .6))
+      } else {
+        color = gray(level = seq(from = .75, to = .25, length.out = K_i))
+      }
+      fillcol = "gray"
+    } else {
+      stop('palette must be "BASS", "grey", an RColorBrewer palette, or a character with 3 valid color specifications.')
+    }
+
+    if(writeout) {
+      eval(parse(text = paste0(imageType, "('ICC", itemInfo$item.ID[i],
+                               fileSuffix, ".", imageType, "')")))
+    }
+
+    layout(matrix(1))
+    par(mai = c(1.36, 1.093333, 1.093333, 0.56), mar = c(5.1, 4.1, 4.1, 2.1))
+    plot(1, type = "n", xlim = c(-6, 6), ylim = c(0, 1), axes = FALSE,
+         xlab = "Logits", ylab = "Probability",
+         main = "Cumulative Category Probability Curves")
+    mtext(as.character(itemInfo$item.name[i]))
+    axis(1, at = seq(-6, 6, 2))
+    axis(1, at = seq(-5, 5, 2), labels = FALSE)
+    axis(2, at = seq(0, 1, .2), las = 1)
+    axis(2, at = seq(.1, .9, .2), labels = FALSE)
+
+    for (k in 1:K_i) {
+      if (observed) {
+        linecol = color[k]
+        # group thetas at nearest .5 value for simplicity & to deal with sparse cells
+        theta <- round(results$persPars[,which(results$consInfo$cons.ID ==
+                                                 itemInfo$cons.ID[i])]/.5) * .5
+        empPts = t(apply(prop.table(table(theta, results$scoresRecoded[,i]),
+                                    margin = 1), 1,
+                         function(x) {
+                           cumsum(rev(x))
+                           }))[,seq((K_i+1), 1, by = -1)]
+        cellCts = t(apply(table(theta, results$scoresRecoded[,i]), 1,
+                          function(x) {
+                            cumsum(rev(x))
+                            }))[,seq((K_i+1), 1, by = -1)]
+      } else {
+        linecol = "grey"
+        x <- c(seq(from = -6, to = 6, length.out = 500))
+        y1 <- c(boot::inv.logit(x - thres[k]))
+        y2 <- c(boot::inv.logit(x - thres[k+1]))
+        polygon(c(x, rev(x)), c(y1, rev(y2)), col = color[k], border = NA)
+      }
+      curve(boot::inv.logit(x - thres[k]), from = -6, to = 6, add = TRUE,
+            col = linecol, lwd = 2)
+      if (observed) {
+        points(sort(unique(theta))[cellCts[,(k+1)] >= minCell],
+               empPts[cellCts[,(k+1)] >= minCell,(k+1)], col = color[k],
+               pch = 20)
+      } else {
+        abline(v = focusTheta, col = linecol, lty = 2, lwd = 2)
+        for (a in 1:length(focusTheta)) {
+          bounds <- boot::inv.logit(focusTheta[a] - thres)
+          L <- placement <- rep(NA, length(bounds) + 1)
+          for (k in 0:K_i) {
+            if (k == 0) {
+              upBd = 1
+            } else {
+              upBd = bounds[k]
+            }
+            if (k == K_i) {
+              loBd = 0
+            } else {
+              loBd = bounds[k+1]
+            }
+            L[k+1] = paste0("p(",k,")=", round(upBd - loBd, 2))
+            placement[k+1] = mean(c(upBd, loBd))
+          }
+          points(x = rep(focusTheta[a], length(bounds)), y = bounds, pch=21,
+                 bg = fillcol)
+          text(x = rep(focusTheta[a], length(bounds) + 1), y = placement,
+               labels = L, pos = 4, cex = .5)
+        }
+      }
+    }
+
+    if (writeout) {
+      dev.off()
+    }
+  }
+
+  par(origPar)
+}

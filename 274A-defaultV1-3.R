@@ -13,7 +13,6 @@ row.names(itemsXscores) = as.character(itemInfo$item.name)
 
 # graphic output and accompanying tables
 
-ICC.graph()
 CPC.graph()
 SEM.graph()
 
