@@ -150,3 +150,31 @@ item.analysis <- function(results, writeout = FALSE, filePrefix= NULL) {
 
   list(byItem,byStep)
 }
+
+
+###############################################################################
+#' Plots the standard error of measurement or test information fucntion.
+#'
+#' @param results The output from a run of \code{craschR}. (link?)
+#' @param dim Specify which dimension(s) to create graphic/tables for.  If
+#'   \code{NULL}, output and graphics for each dimension will be produced.
+#' @param writeout A logical indicated whether the graph should be written to
+#'   your working directory as your indicated \code{imageType}.  If \code{TRUE},
+#'   the file name will begin \code{SEM} or \code{TIC} and will include an index
+#'   (if more than one graph is produced) and the \code{fileSuffix} if provided.
+#' @param imageType A character string indicating the format for graphics (if
+#'   \code{writeout = TRUE}). Supported types:
+#'   \code{c("pdf","svg","jpeg","bmp","tiff","png")}.
+#' @param fileSuffix A character string that will be affixed to the end of each
+#'   file name (if \code{writeout = TRUE}). Use this if you are conducting
+#'   multiple analyses in the same working directory and do not wish for your
+#'   existing files to be overwritten.
+#'
+#' @return A plot of the SEM or TIC curve.
+#'
+#' @export
+
+SEM.graph <- function(results, dim = NULL,
+                      writeout = FALSE, imageType = "pdf", fileSuffix = NULL) {
+
+}

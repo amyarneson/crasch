@@ -13,7 +13,6 @@ row.names(itemsXscores) = as.character(itemInfo$item.name)
 
 # graphic output and accompanying tables
 
-CPC.graph()
 SEM.graph()
 
 infitMNSQ.graph() #overall item fit
