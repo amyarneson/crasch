@@ -45,6 +45,7 @@ ADP <- craschR(scores = ADPwide, itemInfo = ADPitem, consInfo = ADPcons,
 item.scores(ADP)
 item.scores(ADP, freqs = FALSE)
 pers.hist(ADP)
+CPC.graph(ADP)
 
 AMY <- craschR(scores = AMYwide, itemInfo = AMYitem, consInfo = AMYcons,
                varsInfo = AMYvars, estPackage = "TAM", retainOrig = TRUE,
@@ -57,4 +58,9 @@ wm(AMY, itemOrder = 1:4) # errors/warnings -- look into this next time!
 ICC.graph(AMY)
 CPC.graph(AMY)
 CPC.graph(AMY, observed = TRUE, palette = "PuBu")
-
+info.graph(AMY)
+info.graph(AMY, type = "IIC")
+info.graph(AMY, type = "TIC")
+info.graph(AMY, type = "IIC", dim = 2) # error in this one
+info.graph(AMY, dim = 1, type = "TIC", completeOnly = FALSE)
+item.analysis(AMY)

@@ -365,7 +365,7 @@ ICC.graph <- function(results, itemOrder = NULL, palette = "BASS",
 #' @param itemOrder A numeric vector that specifies which items from the output
 #'   should be graphed.  If \code{NULL}, all items will be graphed.
 #' @param palette A character string indicating the color scheme.  Can be
-#'   "BASS", any RColorBrewer palette, or a vector containing 3 colors.
+#'   "BASS", "grey", or any RColorBrewer palette.
 #' @param observed A logical indicating whether or not the observed proportions
 #'   should be graphed as points along with the curve.
 #' @param minCell A positive integer indicating the smallest cell value to plot
@@ -428,11 +428,11 @@ CPC.graph <- function(results, itemOrder = NULL, palette = "BASS",
         color = gray(level = seq(from = .75, to = .25, length.out = K_i))
       }
       fillcol = "gray"
-    } else {
-      stop('palette must be "BASS", "grey", an RColorBrewer palette, or a character with 3 valid color specifications.')
+    }  else {
+      stop('palette must be "BASS", "grey", or an RColorBrewer palette.')
     }
 
-    if(writeout) {
+    if (writeout) {
       eval(parse(text = paste0(imageType, "('ICC", itemInfo$item.ID[i],
                                fileSuffix, ".", imageType, "')")))
     }

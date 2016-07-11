@@ -18,12 +18,12 @@ Depends:
     RColorBrewer
 Imports:
     mirt,
+    TAM,
+    ltm,
     lme4,
     sirt,
     Hmisc,
-    boot,
-    ltm
+    boot
 Suggests:
-    TAM,
     testthat
 RoxygenNote: 5.0.1

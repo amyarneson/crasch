@@ -6,42 +6,6 @@
 # DO NOT MAKE CHANGES TO THIS FILE WITHOUT FIRST CONSULTING WITH THE GSI!
 
 ####################################################################################################
-# Create a standard error of measure (SEM) graph (unidimensional)
-
-SEM.graph <- function(data=wide,theta=pers.pars[,1],
-                      SE.theta=pers.pars[,2],
-                      construct=as.character(C.Name),main="Standard Error of Measurement",
-                      sub="(Complete Cases)",complete.only=TRUE,
-                      outfile="SEMgraphCOMP",imgtype=Image.Type,writeout=Autosave) {
-  if (complete.only) {
-    stopifnot(sum(complete.cases(data))>0)
-    theta=theta[complete.cases(data)]
-    SE.theta=SE.theta[complete.cases(data)]
-  } else {
-    stopifnot(anyNA(wide))
-    sub="(All Cases)"
-    outfile="SEMgraphALL"
-  }
-
-  if (writeout) {
-    eval(parse(text=paste0(imgtype,"('",outfile,".",imgtype,"')")))
-  }
-  par(def.par)
-  layout(matrix(1,nrow=1))
-  plot(theta,SE.theta,main=main,
-       xlab="Logits",ylab="SE",axes=FALSE,
-       pch=21,bg="#80b1d3")
-  mtext(paste(construct,sub))
-  axis(1,at=seq(floor(min(theta)),ceiling(max(theta)),by=1),labels=FALSE)
-  axis(1,at=seq(0,min(-2,floor(min(theta))),by=-2))
-  axis(1,at=seq(2,max(ceiling(max(theta)),2),by=2))
-  axis(2,at=seq(floor(min(SE.theta)*10)/10,ceiling(max(SE.theta)*10)/10,by=.1),labels=FALSE)
-  axis(2,at=seq(floor(min(SE.theta)*5)/5,ceiling(max(SE.theta)*5)/5,by=.2),las=1)
-
-  if(writeout) { dev.off() }
-}
-
-####################################################################################################
 # Create an infit MNSQ plot with 'acceptable range' highlighted
 # items is an ordered vector of item names (factor)
 

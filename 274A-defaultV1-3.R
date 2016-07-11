@@ -13,8 +13,6 @@ row.names(itemsXscores) = as.character(itemInfo$item.name)
 
 # graphic output and accompanying tables
 
-SEM.graph()
-
 infitMNSQ.graph() #overall item fit
 if (maxK>2) { #step fit (for polytomous items only)
   infitMNSQ.graph(items=factor(fit$itemfit$parameter[(nrow(item.info)+1):length(fit$itemfit$parameter)],

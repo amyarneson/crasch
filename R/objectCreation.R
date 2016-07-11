@@ -200,3 +200,24 @@ empty.cats <- function(wide,
 
   return(item.list)
 }
+
+################################################################################
+# get category probabilities
+
+catProbs <- function(theta, itemThres) {
+  I <- nrow(itemThres)
+  cumulProbs <- matrix(c(rep(1, I),
+                         boot::inv.logit(theta - itemThres),
+                         rep(NA, I)),
+                       nrow = I,
+                       ncol = ncol(itemThres) + 2)
+  # need to put 0s in at the end of each vector (the first NA of each row)
+  for (i in 1:nrow(cumulProbs)) {
+    cumulProbs[i, min(which(is.na(cumulProbs[i,])))] = 0
+  }
+  # transform from cumulative to point
+  apply(cumulProbs, 1, function(y) { -diff(y) } )
+}
+
+################################################################################
+# get expected scores based on
