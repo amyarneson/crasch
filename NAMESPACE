@@ -3,6 +3,8 @@
 export(CPC.graph)
 export(ICC.graph)
 export(craschR)
+export(infit.MNSQ)
+export(info.graph)
 export(item.analysis)
 export(item.scores)
 export(pers.hist)

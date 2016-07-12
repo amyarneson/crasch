@@ -159,8 +159,10 @@ item.analysis <- function(results, writeout = FALSE, filePrefix= NULL) {
 #' @param dim Specify which dimension(s) to create graphic/tables for.  If
 #'   \code{NULL}, output and graphics for each dimension will be produced.
 #' @param type \code{c("SEM", "TIC", "IIC")}
-#' @param completeOnly
-#' @param thetaGrid
+#' @param completeOnly A logical indicating whether to graph points for
+#'   respondents who received a score on all items or everyone, no matter what.
+#' @param thetaGrid A vector containing the range of thetas for the function
+#'   graph.
 #' @param palette A character string indicating the color scheme.  Can be
 #'   "BASS", any RColorBrewer palette, or a vector containing 2 colors (the
 #'   first for the line and the second for the points).

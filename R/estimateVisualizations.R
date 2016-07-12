@@ -534,10 +534,10 @@ CPC.graph <- function(results, itemOrder = NULL, palette = "BASS",
 #'   multiple analyses in the same working directory and do not wish for your
 #'   existing files to be overwritten.
 #'
-#' @return
-#'
-#' @export One or more plots of the infit mean squares with "acceptable" region
+#' @return One or more plots of the infit mean squares with "acceptable" region
 #'   highlighted.
+#'
+#' @export
 
 infit.MNSQ <- function(results, itemOrder = NULL, params = "items",
                        palette = "BASS",
