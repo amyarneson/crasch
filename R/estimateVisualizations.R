@@ -510,3 +510,129 @@ CPC.graph <- function(results, itemOrder = NULL, palette = "BASS",
 
   par(origPar)
 }
+
+
+################################################################################
+#' Plots in infit mean sqare statistics from \code{craschR} output.
+#'
+#' @param results The output from a run of \code{craschR}. (link?)
+#' @param itemOrder A numeric vector that specifies which items from the output
+#'   should be graphed.  If \code{NULL}, all items will be graphed.
+#' @param params A string indicating for which parameters fit should be graphed.
+#'   Can be \code{"items"} or \code{"steps"}.
+#' @param palette A character string indicating the color scheme.  Can be
+#'   "BASS", "grey", or any RColorBrewer palette.
+#' @param writeout A logical indicating whether the graphic should be written to
+#'   to your working directory as your specified \code{imageType}.  If
+#'   \code{TRUE}, the file name will begin \code{infit}, followed by the
+#'   \code{fileSuffix} if provided.
+#' @param imageType A character string indicating the format for graphics (if
+#'   \code{writeout = TRUE}). Supported types:
+#'   \code{c("pdf","svg","jpeg","bmp","tiff","png")}.
+#' @param fileSuffix A character string that will be affixed to the end of each
+#'   file name (if \code{writeout = TRUE}). Use this if you are conducting
+#'   multiple analyses in the same working directory and do not wish for your
+#'   existing files to be overwritten.
+#'
+#' @return
+#'
+#' @export One or more plots of the infit mean squares with "acceptable" region
+#'   highlighted.
+
+infit.MNSQ <- function(results, itemOrder = NULL, params = "items",
+                       palette = "BASS",
+                       writeout = FALSE, imageType = "pdf", fileSuffix = NULL) {
+  origPar = par(no.readonly = TRUE) # to reset graphical parameters after
+
+  # return error if all items are dichotomous (no steps!)
+
+  if (is.null(itemOrder)) {
+    plotOrder <- 1:results$estSummary$I
+  } else if (is.numeric(itemOrder)) {
+    plotOrder <- itemOrder
+  } else {
+    stop('Invalid itemOrder argument. Must be a vector with valid item numbers.')
+  }
+
+  if (results$estSummary$estPackage == "TAM") {
+    if (params == "items") {
+      toPlot <- data.frame(infit = results$itemFit$infit[plotOrder])
+      row.names(toPlot) <- results$itemInfo$item.name[plotOrder]
+    } else if (params == "steps") {
+      if (is.null(itemOrder)) {
+        toPlot <- data.frame(infit = results$itemFit$infit[(results$estSummary$I+1):nrow(results$itemFit)])
+        row.names(toPlot) <- results$itemFit$item[(results$estSummary$I+1):nrow(results$itemFit)]
+      } else {
+        fullMatrix <- data.frame(
+          as.matrix(stringr::str_split_fixed(as.character(results$itemFit$item[(results$estSummary$I+1):nrow(results$itemFit)]),
+                                             '_step', n = 2)),
+          infit = results$itemFit$infit[(results$estSummary$I+1):nrow(results$itemFit)])
+        colnames(fullMatrix) <- c("item", "step", "infit")
+        redMatrix <- reshape(fullMatrix, idvar = "item", timevar = "step",
+                                     direction = "wide")
+        # dichotomous items will not show up w/step params - account for this
+        if (any(apply(results$scoresRecoded, 2, max, na.rm = TRUE) == 1)) {
+          insertRows <- which(apply(results$scoresRecoded, 2, max, na.rm = TRUE) == 1)
+          for (i in insertRows) {
+            if (i == 1) {
+              redMatrix = rbind(rep(NA, ncol(redMatrix)), redMatrix)
+            } else if (i == results$estSummary$I) {
+              redMatrix = rbind(redMatrix, rep(NA, ncol(redMatrix)))
+            } else {
+              redMatrix = rbind(redMatrix[1:(i-1),], rep(NA, ncol(redMatrix)),
+                                 redMatrix[i:nrow(redMatrix),])
+            }
+          }
+        }
+        redMatrix = redMatrix[plotOrder,]
+        redMatrix = reshape(redMatrix)
+        redMatrix = redMatrix[complete.cases(redMatrix),]
+
+        toPlot <- data.frame(infit = redMatrix[,3])
+        row.names(toPlot) <- paste(redMatrix[,1], redMatrix[,2], sep = "_step")
+      }
+    } else {
+      stop('Invalid params argument. Must be "items" or "steps".')
+    }
+  } else { # fill in once mirt portion is written
+    if (params == "items") {
+
+    } else if (params == "steps") {
+
+    } else {
+      stop('Invalid params argument. Must be "items" or "steps".')
+    }
+  }
+
+  if (palette == "BASS") {
+    color <- c(rgb(red = 128, green = 177, blue = 211, alpha = 127.5,
+                   maxColorValue = 255), "#80b1d3")
+  } else if (palette %in% row.names(brewer.pal.info)) {
+    color <- brewer.pal(3, palette)
+  } else if (all(areColors(palette)) & length(palette)==2) {
+    color <- palette
+  } else {
+    stop('Invalid palette argument.')
+  }
+
+  if(writeout) {
+    eval(parse(text = paste0(imageType, "('infit", fileSuffix, ".", imageType, "')")))
+  }
+  layout(matrix(1, nrow = 1))
+
+  dotchart(x = rev(toPlot[,1]), rev(row.names(toPlot)),
+           main = "Infit Mean Squares", xlab = "Infit MNSQ", ylab = "",
+           xlim = c(min(.7, min(toPlot[,1])), max(1.4, max(toPlot[,1]))),
+           pch = ".")
+  rect(xleft = 3/4, xright = 4/3, ybottom = 0, ytop = (length(toPlot[,1]) + 1),
+       col = color[1],
+       border = NA)
+  abline(v = 1, col = "darkgrey", lty = 3)
+  points(rev(toPlot[,1]), 1:length(toPlot[,1]), pch = 21, bg = color[2])
+
+  if(writeout) {
+    dev.off()
+  }
+
+  par(origPar)
+}

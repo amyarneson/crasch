@@ -55,6 +55,7 @@ pers.hist(AMY)
 wm(AMY)
 wm(AMY, itemOrder = "construct")
 wm(AMY, itemOrder = 1:4) # errors/warnings -- look into this next time!
+                         # messes up graphical parameters!
 ICC.graph(AMY)
 CPC.graph(AMY)
 CPC.graph(AMY, observed = TRUE, palette = "PuBu")
@@ -63,4 +64,8 @@ info.graph(AMY, type = "IIC")
 info.graph(AMY, type = "TIC")
 info.graph(AMY, type = "IIC", dim = 2) # error in this one
 info.graph(AMY, dim = 1, type = "TIC", completeOnly = FALSE)
+info.graph(AMY, dim = 2)
 item.analysis(AMY)
+infit.MNSQ(AMY)
+infit.MNSQ(AMY, params = "steps")
+infit.MNSQ(AMY, itemOrder = c(1,2,4,6,8,10), params = "steps")

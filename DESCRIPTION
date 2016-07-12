@@ -23,7 +23,8 @@ Imports:
     lme4,
     sirt,
     Hmisc,
-    boot
+    boot,
+    stringr
 Suggests:
     testthat
 RoxygenNote: 5.0.1
