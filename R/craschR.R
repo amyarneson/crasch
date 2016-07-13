@@ -315,17 +315,29 @@ craschR <- function(scores, itemInfo = NULL, consInfo = NULL, varsInfo = NULL,
                     missingDataPerc = sum(is.na(wide))/prod(dim(wide))*100)
 
   if ( writeout ) {
-    write.csv(cbind(itemEsts$Pars,itemEsts$SEs,itemEsts$Thres),paste0("itemGrid", fileSuffix, ".csv"))
-    write.csv(cbind(persEsts$Pars,persEsts$SEs,raw=persEsts$Raw,max=persEsts$Max),paste0("persGrid", fileSuffix, ".csv"))
-    write.csv(itemFit,paste0("itemFit", fileSuffix, ".csv"))
-    write.csv(persFit,paste0("persFit", fileSuffix, ".csv"))
-    write.csv(rbind(persVar,persMean),paste0("popDist", fileSuffix, ".csv"))
-    write.csv(classicalStats,paste0("classicalStats", fileSuffix, ".csv"))
-    write.csv(as.matrix(estSummary),paste0("estSummary", fileSuffix, ".csv"))
+    write.csv(cbind(itemEsts$Pars, itemEsts$SEs, itemEsts$Thres),
+              paste0("itemGrid", fileSuffix, ".csv"))
+    write.csv(cbind(persEsts$Pars, persEsts$SEs, raw = persEsts$Raw,
+                    max = persEsts$Max), paste0("persGrid", fileSuffix, ".csv"))
+    write.csv(itemFit, paste0("itemFit", fileSuffix, ".csv"))
+    write.csv(persFit, paste0("persFit", fileSuffix, ".csv"))
+    write.csv(rbind(persVar, persMean), paste0("popDist", fileSuffix, ".csv"))
+    write.csv(classicalStats, paste0("classicalStats", fileSuffix, ".csv"))
+    write.csv(as.matrix(estSummary), paste0("estSummary", fileSuffix, ".csv"))
     # organize empty category info into readable table
-      # include item number, name, construct, names of empty cats
-      # only include items with empty cats
-      # only write if there are items with empty cats
+      rowMax <- max(sapply(empties, length))
+      if (rowMax > 0) { # only write if there are empty categories
+        empties0 <- data.frame(item.ID = itemInfo$item.ID,
+                               item.name = itemInfo$item.name,
+                               cons.ID = itemInfo$cons.ID,
+                               category = do.call(rbind, lapply(empties,
+                                          function(x) {
+                                            length(x) <- rowMax
+                                            x })))
+        empties0 = reshape(empties0, direction = "long", varying = 4:ncol(empties0), idvar = "item.ID")
+        empties0 = empties0[complete.cases(empties0),-4]
+        write.csv(empties0, paste0("empties", fileSuffix, ".csv"), row.names = FALSE)
+      }
   }
 
   output = list(itemPars = itemEsts$Pars,
