@@ -62,7 +62,7 @@ CPC.graph(AMY, observed = TRUE, palette = "PuBu")
 info.graph(AMY)
 info.graph(AMY, type = "IIC")
 info.graph(AMY, type = "TIC")
-info.graph(AMY, type = "IIC", dim = 2) # error in this one
+info.graph(AMY, type = "IIC", dim = 1)
 info.graph(AMY, dim = 1, type = "TIC", completeOnly = FALSE)
 info.graph(AMY, dim = 2)
 item.analysis(AMY)

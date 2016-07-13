@@ -62,6 +62,7 @@ info.graph <- function(results, dim = NULL, type = "SEM", completeOnly = TRUE,
   K <- ncol(results$itemThres)
   inclConsIDs <- results$consInfo$cons.ID[D]
   inclItem <- results$itemInfo$cons.ID %in% inclConsIDs
+  itemInfo <- results$itemInfo[inclItem,]
 
   # polytomous item information as in Muraki (1993)
   probs <- lapply(thetaGrid, catProbs, itemThres = results$itemThres[inclItem,])
@@ -111,7 +112,7 @@ info.graph <- function(results, dim = NULL, type = "SEM", completeOnly = TRUE,
   }
 
   if (type == "IIC") {
-    for (i in 1:length(inclItem)) {
+    for (i in 1:sum(inclItem)) {
       if(writeout) {
         eval(parse(text = paste0(imageType, "('IIC-item", i, fileSuffix, ".",
                                  imageType, "')")))
@@ -124,7 +125,7 @@ info.graph <- function(results, dim = NULL, type = "SEM", completeOnly = TRUE,
            ylim = c(0, max(infoItem[i,])), axes = FALSE,
            xlab = "Logits", ylab = "Information",
            main = "Item Information Curve")
-      mtext(as.character(results$itemInfo$item.name[i]))
+      mtext(as.character(itemInfo$item.name[i]))
       lines(thetaGrid, infoItem[i,], lwd = 2, col = color[1])
       axis(1, at = seq(minX, maxX, 2))
       axis(1, at = seq(minX+1, maxX-1, 2), labels = FALSE)
