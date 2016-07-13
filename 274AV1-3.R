@@ -1,10 +1,6 @@
 ## 274A annotated sample script for unidimensional analysis
 
 ####################################################################################################
-# RUN MODEL & OBTAIN DEFAULT OUTPUT
-source("274A-defaultV1-3.R")
-
-####################################################################################################
 # POST-ESTIMATION OUTPUT
 #
 # KIDMAPS

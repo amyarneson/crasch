@@ -241,24 +241,26 @@ craschR <- function(scores, itemInfo = NULL, consInfo = NULL, varsInfo = NULL,
 
     # calculate fit statistics for both items and persons
     itemFit <- TAM::tam.fit(results,progress = FALSE)$itemfit
-    colnames(itemFit) = c("item","outfit","outfit_t","outfit_p","outfit_pholm",
-                          "infit","infit_t","infit_p","infit_pholm")
+    colnames(itemFit) = c("item", "outfit", "outfit_t", "outfit_p", "outfit_pholm",
+                          "infit", "infit_t", "infit_p", "infit_pholm")
     if ( consecutive && D > 1 ) {
       persFit <- list()
       for (d in 1:D) {
-        persFit[[d]] <- data.frame(matrix(nrow=N,ncol=4))
+        persFit[[d]] <- data.frame(matrix(nrow = N, ncol = 4))
         persFit[[d]][complete.cases(persEsts$Pars),] <-
           sirt::pcm.fit(b = -results$AXsi[which(itemInfo$cons.ID == consInfo$cons.ID[d]),-1],
-                        theta = as.matrix(persEsts$Pars[complete.cases(persEsts$Pars),d]),
-                        dat = wide[complete.cases(persEsts$Pars),which(itemInfo$cons.ID == consInfo$cons.ID[d])])$personfit[,-1]
+                        theta = as.matrix(persEsts$Pars[complete.cases(persEsts$Pars), d]),
+                        dat = wide[complete.cases(persEsts$Pars), which(itemInfo$cons.ID == consInfo$cons.ID[d])])$personfit[,-1]
+        colnames(persFit[[d]]) <- c("outfit", "outfit_t", "infit", "infit_t")
       }
       names(persFit) <- consInfo$short.name
     } else if ( D == 1 ) {
-      persFit <- data.frame(matrix(nrow=N,ncol=4))
+      persFit <- data.frame(matrix(nrow = N, ncol = 4))
       persFit[complete.cases(persEsts$Pars),] <-
         sirt::pcm.fit(b = -results$AXsi[,-1],
                       theta = as.matrix(persEsts$Pars[complete.cases(persEsts$Pars),1]),
                       dat = wide[complete.cases(persEsts$Pars),])$personfit[,-1]
+      colnames(persFit) <- c("outfit", "outfit_t", "infit", "infit_t")
     } else {
       # ?? multi dimensional person fit ??
       warning('Person fit statistics are not available for non-consecutive multi-dimensional analyses using TAM.')
