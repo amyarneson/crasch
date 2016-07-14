@@ -29,21 +29,24 @@
 pers.hist <- function(results, dim = NULL, palette = "BASS",
                       writeout = FALSE, imageType = "pdf", fileSuffix = NULL,
                       ...) {
+  checkResults(results)
+  checkWrite(writeout, fileSuffix)
+  checkImageType(imageType)
+
   origPar = par(no.readonly = TRUE) # to reset graphical parameters after
   if (palette == "BASS") {
-    color <- c("#80b1d3", "gray")
+    color <- c(bar = "#80b1d3", curve = "gray")
   } else if (palette %in% row.names(brewer.pal.info)) {
     color <- RColorBrewer::brewer.pal(3, palette)
+  } else if (all(areColors(palette)) & length(palette)==2) {
+    color <- palette
   } else {
-    if (all(areColors(palette)) & length(palette)==2) {
-      color <- palette
-    } else {
-      stop('Invalid color palette specified. Use "BASS", an RColorBrewer palette, or a vector containing 2 colors.')
-    }
+    stop('Invalid palette argument.')
   }
+
   layout(matrix(1))
-  par(mai=c(1.36,1.093333,1.093333,0.56),
-      mar=c(5.1,4.1,4.1,2.1))
+  par(mai=c(1.36, 1.093333, 1.093333, 0.56),
+      mar=c(5.1, 4.1, 4.1, 2.1))
 
   if (is.null(dim)) {
     D <- 1:results$estSummary$D
@@ -103,9 +106,10 @@ pers.hist <- function(results, dim = NULL, palette = "BASS",
 #' @param probBounds A vector containing the range of probabilities which are
 #'   "unsurprising."
 #' @param palette The color scheme for the plot. Can be "BASS or any
-#'   RColorBrewer palette name (the first 2 colors of the 3-color palette will
-#'   be used). Can also specify a vector with 2 colors in any R-supported form;
-#'   the first color is for the bars and the second is for the normal curve.
+#'   RColorBrewer palette name (the 3-color palette will be used). Can also
+#'   specify a vector with 3 colors in any R-supported form; the first is the
+#'   color of the "expected" area, the second the "surprise" area, and the third
+#'   the point color.
 #' @param writeout A logical indicating whether the graph should be written to
 #'   your working directory as your indicated \code{imageType}.  If \code{TRUE},
 #'   the file name will begin \code{KIDMAP} and will include an index for the
@@ -125,6 +129,10 @@ pers.hist <- function(results, dim = NULL, palette = "BASS",
 KIDMAP <- function(results, personID, dim = NULL, probBounds = c(.25, .75),
                    palette = "BASS", writeout = FALSE, imageType = "pdf",
                    fileSuffix = NULL) {
+  checkResults(results)
+  checkWrite(writeout, fileSuffix)
+  checkImageType(imageType)
+
   origPar = par(no.readonly = TRUE) # to reset graphical parameters after
 
   if (is.null(dim)) {
@@ -141,6 +149,12 @@ KIDMAP <- function(results, personID, dim = NULL, probBounds = c(.25, .75),
               surprise = rgb(red = 255, green = 229, blue = 0, alpha = 127.5,
                              maxColorValue = 255),
               points = "#80b1d3")
+  } else if (palette %in% row.names(brewer.pal.info)) {
+    color <- RColorBrewer::brewer.pal(3, palette)
+  } else if (all(areColors(palette)) & length(palette) == 3) {
+    color <- palette
+  } else {
+    stop('Invalid palette argument.')
   }
 
   rowIndex <- which(row.names(results$scoresRecoded) == as.character(personID))

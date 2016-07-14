@@ -100,7 +100,7 @@ craschR <- function(scores, itemInfo = NULL, consInfo = NULL, varsInfo = NULL,
                     estPackage="mirt", retainOrig = FALSE,
                     missingAs0 = FALSE, longFormat = FALSE,
                     persMethod = "EAP", consecutive = FALSE,
-                    writeout = TRUE, imageType = "pdf", fileSuffix = NULL, ...) {
+                    writeout = TRUE, fileSuffix = NULL, ...) {
 
   # if files are supplied for scores,itemInfo,consInfo,varsInfo:
   if ( is.character(scores) ) {
@@ -127,8 +127,7 @@ craschR <- function(scores, itemInfo = NULL, consInfo = NULL, varsInfo = NULL,
   # addition of any input/argument also requires an update of the functions in
   #   internalChecks.R
   checkInput(scores, itemInfo, consInfo, varsInfo, estPackage, retainOrig,
-             missingAs0, longFormat, persMethod, consecutive, writeout,
-             imageType)
+             missingAs0, longFormat, persMethod, consecutive, writeout)
 
   # reshape to wide if necessary
   if ( longFormat ) {

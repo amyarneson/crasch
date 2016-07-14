@@ -1,10 +1,10 @@
 ###############################################################################
-# check for correct classes/values of inputs
+# check for correct classes/values of inputs for craschR function
   checkInput <- function(scores, itemInfo, consInfo, varsInfo,
                          estPackage, retainOrig,
                          missingAs0, longFormat,
                          persMethod, consecutive,
-                         writeout, imageType) {
+                         writeout) {
     stopifnot(is.data.frame(scores) | is.character(scores),
               is.null(itemInfo) | is.data.frame(itemInfo) | is.character(itemInfo),
               is.null(consInfo) | is.data.frame(consInfo) | is.character(consInfo),
@@ -13,8 +13,8 @@
               is.logical(retainOrig),
               is.logical(missingAs0),
               is.logical(longFormat),
-              persMethod %in% c("EAP","MLE","WLE","MAP"),
-              imageType %in% c("pdf","svg","jpeg","bmp","tiff","png") )
+              persMethod %in% c("EAP","MLE","WLE","MAP")
+    )
 
     if ( longFormat ) {
       # check for correct column names
@@ -59,7 +59,7 @@
   }
 
 ###############################################################################
-# check for continuity between item/construct/response objects
+# check for continuity between item/construct/response objects for craschR
 # note that this is run after the 'wide' object is created
   checkObjs <- function(wide, itemInfo, consInfo, varsInfo,
                         estPackage, retainOrig,
@@ -97,7 +97,7 @@
   }
 
 ################################################################################
-# check for items with no variability
+# check for items with no variability for craschR
   noVar <- function(data) {
     as.numeric(c(which(apply(data,2,function(x) length(unique(x))) == 1)))
   }
@@ -110,3 +110,59 @@ areColors <- function(x) {
              error = function(e) FALSE)
   })
 }
+
+################################################################################
+# check that results is correct format
+
+  checkResults <- function(results) {
+    stopifnot(is.list(results))
+    stopifnot(length(results) == 19 | length(results) == 20)
+    stopifnot(is.matrix(results$itemPars))
+    stopifnot(is.matrix(results$itemSEs))
+    stopifnot(is.matrix(results$itemThres))
+    stopifnot(is.data.frame(results$itemFit))
+    stopifnot(is.data.frame(results$persPars))
+    #stopifnot(is.data.frame(results$persSEs)) # not used in any functions
+    stopifnot(is.data.frame(results$persRaw))
+    stopifnot(is.data.frame(results$persMax))
+    stopifnot(is.list(results$persFit))
+    #stopifnot(is.list(results$popDist)) # not used in any functions as of now
+    #stopifnot(is.numeric(results$sepRel)) # not used in any functions as of now
+    stopifnot(is.list(results$estSummary))
+    stopifnot(is.list(results$classicalStats))
+    stopifnot(is.list(results$empties))
+    stopifnot(is.data.frame(results$scoresOrig))
+    stopifnot(is.data.frame(results$scoresRecoded))
+    stopifnot(is.data.frame(results$itemInfo))
+    stopifnot(is.data.frame(results$consInfo))
+    stopifnot(is.data.frame(results$varsInfo))
+    stopifnot(!any(sapply(results, is.null)))
+  }
+
+################################################################################
+# check that writeout, fileSuffix are correct format
+
+  checkWrite <- function(writeout, fileSuffix) {
+    stopifnot(is.logical(writeout),
+              is.character(fileSuffix) | is.null(fileSuffix))
+    if (writeout == FALSE) {
+      warning('No output was written to file. If you wish to write to file, use writeout=TRUE.')
+    }
+  }
+
+################################################################################
+# check that imageType is correct format
+
+  checkImageType <- function(imageType) {
+    if (!imageType %in% c("pdf","svg","jpeg","bmp","tiff","png")) {
+      stop('Invalid imageType argument. Choose from "pdf", "svg", "jpeg", "bmp", "tiff", and "png".')
+    }
+  }
+
+################################################################################
+# check that palette is correct format
+# actually this will be done within each function on its own since the vector
+#  length will differ!
+
+################################################################################
+# check that dim is correct format

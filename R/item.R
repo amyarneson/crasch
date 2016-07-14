@@ -2,8 +2,6 @@
 #' Creates item analysis tables.
 #'
 #' @param results The output from a run of \code{craschR}. (link?)
-#' @param dim Specify which dimension(s) to create graphic/tables for.  If
-#'   \code{NULL}, output and graphics for each dimension will be produced.
 #' @param writeout A logical indicated whether the estimate objects should be
 #'   written to your working directory as CSVs.  If \code{TRUE}, two files will
 #'   be produced, one beginning \code{item-byitem} and the other
@@ -20,6 +18,8 @@
 #' @export
 
 item.analysis <- function(results, writeout = FALSE, filePrefix= NULL) {
+  checkResults(results)
+  checkWrite(writeout, fileSuffix)
 
   # create the byItem table (for TAM output)
   # note that the item name will be the row name
@@ -161,7 +161,9 @@ item.analysis <- function(results, writeout = FALSE, filePrefix= NULL) {
 #' @param params A string indicating for which parameters fit should be graphed.
 #'   Can be \code{"items"} or \code{"steps"}.
 #' @param palette A character string indicating the color scheme.  Can be
-#'   "BASS", "grey", or any RColorBrewer palette.
+#'   "BASS", any RColorBrewer palette (the first 2 of the 3-color palette will
+#'   be used), or a vector containing 2 colors: the first for the shading of the
+#'   "acceptable" region and the second for the point color.
 #' @param writeout A logical indicating whether the graphic should be written to
 #'   to your working directory as your specified \code{imageType}.  If
 #'   \code{TRUE}, the file name will begin \code{infit}, followed by the
@@ -182,6 +184,10 @@ item.analysis <- function(results, writeout = FALSE, filePrefix= NULL) {
 infit.MNSQ <- function(results, itemOrder = NULL, params = "items",
                        palette = "BASS",
                        writeout = FALSE, imageType = "pdf", fileSuffix = NULL) {
+  checkResults(results)
+  checkWrite(writeout, fileSuffix)
+  checkImageType(imageType)
+
   origPar = par(no.readonly = TRUE) # to reset graphical parameters after
 
   # return error if all items are dichotomous (no steps!)
@@ -191,7 +197,7 @@ infit.MNSQ <- function(results, itemOrder = NULL, params = "items",
   } else if (is.numeric(itemOrder)) {
     plotOrder <- itemOrder
   } else {
-    stop('Invalid itemOrder argument. Must be a vector with valid item numbers.')
+    stop('Invalid itemOrder argument.')
   }
 
   if (results$estSummary$estPackage == "TAM") {
@@ -232,7 +238,7 @@ infit.MNSQ <- function(results, itemOrder = NULL, params = "items",
         row.names(toPlot) <- paste(redMatrix[,1], redMatrix[,2], sep = "_step")
       }
     } else {
-      stop('Invalid params argument. Must be "items" or "steps".')
+      stop('Invalid params argument.')
     }
   } else { # fill in once mirt portion is written
     if (params == "items") {
@@ -240,13 +246,14 @@ infit.MNSQ <- function(results, itemOrder = NULL, params = "items",
     } else if (params == "steps") {
 
     } else {
-      stop('Invalid params argument. Must be "items" or "steps".')
+      stop('Invalid params argument.')
     }
   }
 
   if (palette == "BASS") {
-    color <- c(rgb(red = 128, green = 177, blue = 211, alpha = 127.5,
-                   maxColorValue = 255), "#80b1d3")
+    color <- c(acceptable = rgb(red = 128, green = 177, blue = 211,
+                                alpha = 127.5, maxColorValue = 255),
+               points = "#80b1d3")
   } else if (palette %in% row.names(brewer.pal.info)) {
     color <- brewer.pal(3, palette)
   } else if (all(areColors(palette)) & length(palette)==2) {
@@ -312,6 +319,10 @@ infit.MNSQ <- function(results, itemOrder = NULL, params = "items",
 CPC.graph <- function(results, itemOrder = NULL, palette = "BASS",
                       observed = FALSE, minCell = 8, focusTheta = c(-2,0,2),
                       writeout = FALSE, imageType = "pdf", fileSuffix = NULL) {
+  checkResults(results)
+  checkWrite(writeout, fileSuffix)
+  checkImageType(imageType)
+
   origPar = par(no.readonly = TRUE) # to reset graphical parameters after
 
   if (is.null(itemOrder)) {
@@ -349,7 +360,7 @@ CPC.graph <- function(results, itemOrder = NULL, palette = "BASS",
       }
       fillcol = "gray"
     }  else {
-      stop('palette must be "BASS", "grey", or an RColorBrewer palette.')
+      stop('Invalid palette argument.')
     }
 
     if (writeout) {
@@ -440,7 +451,8 @@ CPC.graph <- function(results, itemOrder = NULL, palette = "BASS",
 #' @param itemOrder A numeric vector that specifies which items from the output
 #'   should be graphed.  If \code{NULL}, all items will be graphed.
 #' @param palette A character string indicating the color scheme.  Can be
-#'   "BASS", any RColorBrewer palette, or a vector containing 3 colors.
+#'   "BASS", any RColorBrewer palette (the 3-color palette will be used), or a
+#'   vector containing 3 colors.
 #' @param writeout A logical indicating whether the graphic should be written to
 #'   to your working directory as your specified \code{imageType}.  If
 #'   \code{TRUE}, the file name will begin \code{ICC}, an index, and the
@@ -459,6 +471,10 @@ CPC.graph <- function(results, itemOrder = NULL, palette = "BASS",
 
 ICC.graph <- function(results, itemOrder = NULL, palette = "BASS",
                       writeout = FALSE, imageType = "pdf", fileSuffix = NULL) {
+  checkResults(results)
+  checkWrite(writeout, fileSuffix)
+  checkImageType(imageType)
+
   origPar = par(no.readonly = TRUE) # to reset graphical parameters after
 
   if (is.null(itemOrder)) {
@@ -474,13 +490,13 @@ ICC.graph <- function(results, itemOrder = NULL, palette = "BASS",
   lty <- rep(1:4, 3)  # no items with >12 categories will be graphed
 
   if (palette == "BASS") {
-    color <- rep(c("#80b1d3", "darkgoldenrod1", "gray52"),4)
+    color <- rep(c("#80b1d3", "darkgoldenrod1", "gray52"), 4)
   } else if (palette %in% row.names(brewer.pal.info)) {
     color <- rep(brewer.pal(3, palette), 4)
   } else if (all(areColors(palette)) & length(palette)==3) {
     color <- rep(palette, 4)
   } else {
-    stop('palette must be "BASS", an RColorBrewer palette, or a character with 3 valid color specifications.')
+    stop('Invalid palette argument.')
   }
 
   for (i in 1:I) {

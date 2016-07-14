@@ -11,7 +11,7 @@
 #'   graph.
 #' @param palette A character string indicating the color scheme.  Can be
 #'   "BASS", any RColorBrewer palette, or a vector containing 2 colors (the
-#'   first for the line and the second for the points).
+#'   first for the curve and the second for the points).
 #' @param writeout A logical indicated whether the graph should be written to
 #'   your working directory as your indicated \code{imageType}.  If \code{TRUE},
 #'   the file name will begin \code{SEM} or \code{TIC} and will include an index
@@ -37,20 +37,23 @@ info.graph <- function(results, dim = NULL, type = "SEM", completeOnly = TRUE,
   if (results$estSummary$D > 1 & !results$estSummary$consecutive) {
     stop('Information curves only available for unidimensional (or consecutive) analyses.')
   }
+  checkResults(results)
+  checkWrite(writeout, fileSuffix)
+  checkImageType(imageType)
 
   origPar = par(no.readonly = TRUE) # so graphical parameters can be reset after
-  par(mai=c(1.36,1.093333,1.093333,0.56),
-      mar=c(5.1,4.1,4.1,2.1),
-      xpd=FALSE)
+  par(mai = c(1.36, 1.093333, 1.093333, 0.56),
+      mar = c(5.1, 4.1, 4.1, 2.1),
+      xpd = FALSE)
 
   if (palette == "BASS") {
-    color <- c("gray52", "#80b1d3")
+    color <- c(curve = "gray52", points = "#80b1d3")
   } else if (palette %in% row.names(brewer.pal.info)) {
     color <- brewer.pal(3, palette)
   } else if (all(areColors(palette)) & length(palette) == 2) {
     color <- palette
   } else {
-    stop('palette must be "BASS", an RColorBrewer palette, or a character with 2 valid color specifications.')
+    stop('Invalid palette argument.')
   }
 
   if (is.null(dim)) {
@@ -229,6 +232,10 @@ info.graph <- function(results, dim = NULL, type = "SEM", completeOnly = TRUE,
 
 wm <- function(results, dim = NULL, itemOrder = "item", palette = "BASS",
                writeout = FALSE, imageType = "pdf", fileSuffix = NULL) {
+  checkResults(results)
+  checkWrite(writeout, fileSuffix)
+  checkImageType(imageType)
+
   origPar = par(no.readonly = TRUE) # to reset graphical parameters after
 
   # if itemOrder=="construct", then the WMs MUST be consecutive (1 for each dim)
@@ -292,7 +299,7 @@ wm <- function(results, dim = NULL, itemOrder = "item", palette = "BASS",
   } else if (palette %in% row.names(brewer.pal.info)) {
     color <- RColorBrewer::brewer.pal(3, palette)
   } else {
-    stop('Please choose an allowed color palette - "BASS" or any RColorBrewer palette.')
+    stop('Invalid palette argument.')
   }
 
   for (i in 1:length(thresList)) {
