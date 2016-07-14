@@ -221,9 +221,9 @@ info.graph <- function(results, dim = NULL, type = "SEM", completeOnly = TRUE,
 #' @param dim A numeric vector that specifies for which dimension(s) to create
 #'   graphic/tables.  If \code{NULL}, output and graphics for each dimension
 #'   will be produced.
-#' @param itemOrder Can be "item", "construct", or a numeric vector.  If "item",
-#'   items will be ordered as in \code{itemInfo}.  If "construct", items will
-#'   be grouped by the levels of the construct.
+#' @param byCat A logical indicating if items/steps should be grouped by the
+#'   construct category.  If \code{FALSE}, items will be plotted in the order
+#'   of \code{itemInfo}.
 #' @param palette A character string indicating the color scheme.  Can be "BASS"
 #'   or any RColorBrewer palette.  If you want to customize further, the
 #'   \code{wrightMap()} function should be used directly, not this wrapper.
@@ -244,18 +244,20 @@ info.graph <- function(results, dim = NULL, type = "SEM", completeOnly = TRUE,
 #'
 #' @export
 
-wm <- function(results, dim = NULL, itemOrder = "item", palette = "BASS",
+wm <- function(results, dim = NULL, byCat = FALSE, palette = "BASS",
                writeout = FALSE, imageType = "pdf", fileSuffix = NULL) {
   checkResults(results)
   checkWrite(writeout, fileSuffix)
   checkImageType(imageType)
   checkDim(dim, results$consInfo)
-  checkItemOrder(itemOrder, results$itemInfo)
+  if (!is.logical(byCat)) {
+    stop('Invalid byCat argument.')
+  }
 
   origPar = par(no.readonly = TRUE) # to reset graphical parameters after
 
-  # if itemOrder=="construct", then the WMs MUST be consecutive (1 for each dim)
-  if (itemOrder == "construct") {
+  # if ordering by construct level, then the WMs MUST be consecutive (1 for each dim)
+  if (byCat) {
     consecutive = TRUE
   } else {
     consecutive = results$estSummary$consecutive
@@ -267,30 +269,21 @@ wm <- function(results, dim = NULL, itemOrder = "item", palette = "BASS",
     D <- dim
   }
 
-  if (is.numeric(itemOrder)) {
-    itemInfo <- results$itemInfo[itemOrder,]
-    itemThres <- results$itemThres[itemOrder,]
-  } else {
-    if (itemOrder != "item" & itemOrder != "construct") {
-      stop('Specify valid itemOrder.  Choose "item", "construct", or provide a numeric vector.')
-    }
-    itemInfo <- results$itemInfo
-    itemThres <- results$itemThres
-  }
+  itemInfo <- results$itemInfo
+  itemThres <- results$itemThres
 
   if (consecutive) {
     thresList <- list()
     for (i in 1:length(D)) {
       # get the indices for the items on each construct
-      thresList[[i]] <- which(itemInfo$cons.ID == results$consInfo$cons.ID[D[i]])
+      thresList[[i]] <- which(results$itemInfo$cons.ID == results$consInfo$cons.ID[D[i]])
     }
   } else {
     thresList <- list(1:results$estSummary$I)
   }
 
-  if (itemOrder == "construct") {
-    # this option means that people are using all of the items, and they won't be in a different order!
-    itemXcat <- as.matrix(itemInfo[,6:ncol(itemInfo)])
+  if (byCat) {
+    itemXcat <- as.matrix(results$itemInfo[,6:ncol(results$itemInfo)])
 
     for (i in 1:results$estSummary$I) {
       # "remove" the empty categories
@@ -305,9 +298,9 @@ wm <- function(results, dim = NULL, itemOrder = "item", palette = "BASS",
     itemXcat = t(itemXcat[,-1])
     # fill in the thresholds
     toGraph <- matrix(nrow = nrow(itemXcat), ncol = ncol(itemXcat))
-    toGraph[itemXcat] <- c(t(itemThres))[!is.na(c(t(itemThres)))]
+    toGraph[itemXcat] <- c(t(results$itemThres))[!is.na(c(t(results$itemThres)))]
   } else {
-    toGraph <- itemThres
+    toGraph <- results$itemThres
   }
 
   if (palette == "BASS") {
@@ -323,7 +316,7 @@ wm <- function(results, dim = NULL, itemOrder = "item", palette = "BASS",
     if (consecutive) {
       thetas <- results$persPars[,D[i]]
       cons <- consLabel <- paste0(results$consInfo$short.name[D[i]], " ")
-      thresLabel <- matrix(rep(itemInfo$item.name, each = nrow(toGraph)),
+      thresLabel <- matrix(rep(results$itemInfo$item.name, each = nrow(toGraph)),
                            nrow = nrow(toGraph), ncol = ncol(toGraph))
     } else {
       thetas <- results$persPars
@@ -331,26 +324,23 @@ wm <- function(results, dim = NULL, itemOrder = "item", palette = "BASS",
       consLabel <- colnames(results$persPars)
     }
 
-    if (itemOrder == "construct") {
+    if (byCat) {
       thres <- toGraph[,thresList[[i]]]
       xLabel <- results$consInfo[D[i], 5:ncol(results$consInfo)]
       thresPos <- c(2,4)
     } else {
       thres <- toGraph[thresList[[i]],]
-      xLabel <- itemInfo$item.name[thresList[[i]]]
+      xLabel <- results$itemInfo$item.name[thresList[[i]]]
       thresPos <- 2
     }
 
     if (writeout) {
-      if (itemOrder == "item") {
+      if (!byCat) {
         fileName <- "-itemorder"
         imgWidth <- min(14, length(thresList[[i]]))
-      } else if (itemOrder == "construct") {
+      } else {
         fileName <- "-constructorder"
         imgWidth <- max(6, 2*(ncol(results$consInfo) - 5))
-      } else {
-        fileName <- "-customorder"
-        imgWidth <- min(14, length(thresList[[i]]))
       }
 
       if (length(thresList)==1) {

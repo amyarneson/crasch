@@ -70,7 +70,7 @@
     }
   }
 
-###############################################################################
+################################################################################
 # check for continuity between item/construct/response objects for craschR
 # note that this is run after the 'wide' object is created
   checkObjs <- function(wide, itemInfo, consInfo, varsInfo,
@@ -175,13 +175,15 @@ areColors <- function(x) {
 # check that dim is correct format
 
   checkDim <- function(dim, consInfo) {
-    if (!is.numeric(dim)) {
+    if (!(is.numeric(dim) | is.null(dim))) {
       stop('Invalid dim argument.')
     }
-    if (!(all(dim <= nrow(consInfo)) &
-          all(dim %% 1 == 0) &
-          all(dim > 0))) {
-      stop('Invalid dim argument.')
+    if (is.numeric(dim)) {
+      if (!(all(dim <= nrow(consInfo)) &
+            all(dim %% 1 == 0) &
+            all(dim > 0))) {
+        stop('Invalid dim argument.')
+      }
     }
   }
 
@@ -189,12 +191,14 @@ areColors <- function(x) {
 # check that itemOrder is correct format
 
   checkItemOrder <- function(itemOrder, itemInfo) {
-    if (!is.numeric(itemOrder)) {
+    if (!(is.numeric(itemOrder) | is.null(itemOrder))) {
       stop('Invalid itemOrder argument.')
     }
-    if (!(all(itemOrder <= nrow(itemInfo)) &
-          all(itemOrder %% 1 == 0) &
-          all(itemOrder > 0))) {
-      stop('Invalid itemOrder argument.')
+    if (is.numeric(itemOrder)) {
+      if (!(all(itemOrder <= nrow(itemInfo)) &
+            all(itemOrder %% 1 == 0) &
+            all(itemOrder > 0))) {
+        stop('Invalid itemOrder argument.')
+      }
     }
   }

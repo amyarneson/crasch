@@ -332,14 +332,14 @@ CPC.graph <- function(results, itemOrder = NULL, palette = "BASS",
   if (!is.logical(observed)) {
     stop('Invalid observed argument.')
   }
-  if (!(is.numeric(minCell) & minCell > 0 & minCell %% 1 != 0)) {
+  if (!(is.numeric(minCell) & (minCell > 0) & (minCell %% 1 == 0))) {
     stop('Invalid minCell argument.')
   }
   if (!is.numeric(focusTheta)) {
     stop('Invalid focusTheta argument.')
   }
 
-  if (minCell < 10) {
+  if (minCell < 10 & observed) {
     warning('Low cell counts (<10) will be graphed. Interpret with caution.')
   }
 
@@ -422,7 +422,7 @@ CPC.graph <- function(results, itemOrder = NULL, palette = "BASS",
         polygon(c(x, rev(x)), c(y1, rev(y2)), col = color[k], border = NA)
       }
       curve(boot::inv.logit(x - thres[k]), from = -6, to = 6, add = TRUE,
-            col = linecol, lwd = 2)
+            col = "black", lwd = 2)
       if (observed) {
         points(sort(unique(theta))[cellCts[,(k+1)] >= minCell],
                empPts[cellCts[,(k+1)] >= minCell,(k+1)], col = color[k],

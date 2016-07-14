@@ -1,4 +1,4 @@
-#' Produce item and person estimates and fit statistics.
+#' Item and person estimates and fit statistics.
 #'
 #' @param scores A data frame or path to CSV file in crasch format with the
 #'   scoring information. The scores are be coded as integers in terms of the
@@ -102,21 +102,29 @@ craschR <- function(scores, itemInfo = NULL, consInfo = NULL, varsInfo = NULL,
                     persMethod = "EAP", consecutive = FALSE,
                     writeout = TRUE, fileSuffix = NULL, ...) {
 
-  # if files are supplied for scores,itemInfo,consInfo,varsInfo:
+  # if files are supplied for scores, itemInfo, consInfo, varsInfo:
   if ( is.character(scores) ) {
-    if ( !grepl(".csv$",scores) ) { stop("scores file must end with '.csv'") }
+    if ( !grepl(".csv$",scores) ) {
+      stop("scores file must end with '.csv'")
+    }
     scores <- data.frame(read.csv(scores,stringsAsFactors=FALSE,row.names=1))
   }
   if ( is.character(itemInfo) ) {
-    if ( !grepl(".csv$",itemInfo) ) { stop("itemInfo file must end with '.csv'") }
+    if ( !grepl(".csv$",itemInfo) ) {
+      stop("itemInfo file must end with '.csv'")
+    }
     itemInfo <- data.frame(read.csv(itemInfo,stringsAsFactors=FALSE))
   }
   if ( is.character(consInfo) ) {
-    if ( !grepl(".csv$",consInfo) ) { stop("consInfo file must end with '.csv'") }
+    if ( !grepl(".csv$",consInfo) ) {
+      stop("consInfo file must end with '.csv'")
+    }
     consInfo <- data.frame(read.csv(consInfo,stringsAsFactors=FALSE))
   }
   if ( is.character(varsInfo) ) {
-    if ( !grepl(".csv$",varsInfo) ) { stop("varsInfo file must end with '.csv'") }
+    if ( !grepl(".csv$",varsInfo) ) {
+      stop("varsInfo file must end with '.csv'")
+    }
     varsInfo <- data.frame(read.csv(varsInfo))
   }
 
@@ -128,6 +136,7 @@ craschR <- function(scores, itemInfo = NULL, consInfo = NULL, varsInfo = NULL,
   #   internalChecks.R
   checkInput(scores, itemInfo, consInfo, varsInfo, estPackage, retainOrig,
              missingAs0, longFormat, persMethod, consecutive, writeout)
+  checkWrite(writeout, fileSuffix)
 
   # reshape to wide if necessary
   if ( longFormat ) {
@@ -135,7 +144,8 @@ craschR <- function(scores, itemInfo = NULL, consInfo = NULL, varsInfo = NULL,
                     v.names="cat",idvar="resp.ID",direction="wide")
     row.names(wide) = wide$resp.ID
     wide$resp.ID = NULL
-    colnames(wide) = itemInfo$item.name[itemInfo$item.ID==as.numeric(gsub("cat.","",colnames(wide)))]
+    colnames(wide) = itemInfo$item.name[itemInfo$item.ID ==
+                                     as.numeric(gsub("cat.","",colnames(wide)))]
   } else {
     wide <- scores
   }
@@ -204,7 +214,7 @@ craschR <- function(scores, itemInfo = NULL, consInfo = NULL, varsInfo = NULL,
   dropped = noVar(wide)
   if (length(dropped) > 0) {
     warning(length(dropped),
-            " item(s) showed no response variability and were dropped from analysis:\n",
+    " item(s) showed no response variability and were dropped from analysis:\n",
             paste(paste("    ",itemInfo$item.name[dropped]," (",
                         itemInfo$item.ID[dropped],")",sep=""),collapse="\n"),
             "\n")
@@ -236,20 +246,26 @@ craschR <- function(scores, itemInfo = NULL, consInfo = NULL, varsInfo = NULL,
     itemEsts <- TAM.items(results, itemInfo)
 
     # organize person estimates
-    persEsts <- TAM.pers(results, wide, itemInfo, itemEsts$Thres, consInfo, consecutive, persMethod)
+    persEsts <- TAM.pers(results, wide, itemInfo, itemEsts$Thres, consInfo,
+                         consecutive, persMethod)
 
     # calculate fit statistics for both items and persons
     itemFit <- TAM::tam.fit(results,progress = FALSE)$itemfit
-    colnames(itemFit) = c("item", "outfit", "outfit_t", "outfit_p", "outfit_pholm",
-                          "infit", "infit_t", "infit_p", "infit_pholm")
+    colnames(itemFit) = c("item", "outfit", "outfit_t", "outfit_p",
+                          "outfit_pholm", "infit", "infit_t", "infit_p",
+                          "infit_pholm")
     if ( consecutive && D > 1 ) {
       persFit <- list()
       for (d in 1:D) {
         persFit[[d]] <- data.frame(matrix(nrow = N, ncol = 4))
         persFit[[d]][complete.cases(persEsts$Pars),] <-
-          sirt::pcm.fit(b = -results$AXsi[which(itemInfo$cons.ID == consInfo$cons.ID[d]),-1],
-                        theta = as.matrix(persEsts$Pars[complete.cases(persEsts$Pars), d]),
-                        dat = wide[complete.cases(persEsts$Pars), which(itemInfo$cons.ID == consInfo$cons.ID[d])])$personfit[,-1]
+          sirt::pcm.fit(b = -results$AXsi[which(itemInfo$cons.ID ==
+                                                  consInfo$cons.ID[d]),-1],
+                        theta = as.matrix(
+                          persEsts$Pars[complete.cases(persEsts$Pars), d]),
+                        dat = wide[complete.cases(persEsts$Pars),
+                                   which(itemInfo$cons.ID ==
+                                           consInfo$cons.ID[d])])$personfit[,-1]
         colnames(persFit[[d]]) <- c("outfit", "outfit_t", "infit", "infit_t")
       }
       names(persFit) <- consInfo$short.name
@@ -257,7 +273,9 @@ craschR <- function(scores, itemInfo = NULL, consInfo = NULL, varsInfo = NULL,
       persFit <- data.frame(matrix(nrow = N, ncol = 4))
       persFit[complete.cases(persEsts$Pars),] <-
         sirt::pcm.fit(b = -results$AXsi[,-1],
-                      theta = as.matrix(persEsts$Pars[complete.cases(persEsts$Pars),1]),
+                      theta =
+                        as.matrix(persEsts$Pars[complete.cases(persEsts$Pars),
+                                                1]),
                       dat = wide[complete.cases(persEsts$Pars),])$personfit[,-1]
       colnames(persFit) <- c("outfit", "outfit_t", "infit", "infit_t")
     } else {
@@ -269,7 +287,8 @@ craschR <- function(scores, itemInfo = NULL, consInfo = NULL, varsInfo = NULL,
     # person population parameter estimates
     persVar = results$variance
     persMean = results$beta
-    row.names(persVar) <- colnames(persVar) <- colnames(persMean) <- consInfo$short.name
+    row.names(persVar) <- colnames(persVar) <- colnames(persMean) <-
+      consInfo$short.name
     row.names(persMean) <- "popMean"
 
     # separation reliability
@@ -335,9 +354,11 @@ craschR <- function(scores, itemInfo = NULL, consInfo = NULL, varsInfo = NULL,
                                           function(x) {
                                             length(x) <- rowMax
                                             x })))
-        empties0 = reshape(empties0, direction = "long", varying = 4:ncol(empties0), idvar = "item.ID")
+        empties0 = reshape(empties0, direction = "long",
+                           varying = 4:ncol(empties0), idvar = "item.ID")
         empties0 = empties0[complete.cases(empties0),-4]
-        write.csv(empties0, paste0("empties", fileSuffix, ".csv"), row.names = FALSE)
+        write.csv(empties0, paste0("empties", fileSuffix, ".csv"),
+                  row.names = FALSE)
       }
   }
 
