@@ -32,6 +32,7 @@ pers.hist <- function(results, dim = NULL, palette = "BASS",
   checkResults(results)
   checkWrite(writeout, fileSuffix)
   checkImageType(imageType)
+  checkDim(dim, results$consInfo)
 
   origPar = par(no.readonly = TRUE) # to reset graphical parameters after
   if (palette == "BASS") {
@@ -132,6 +133,18 @@ KIDMAP <- function(results, personID, dim = NULL, probBounds = c(.25, .75),
   checkResults(results)
   checkWrite(writeout, fileSuffix)
   checkImageType(imageType)
+  checkDim(dim, results$consInfo)
+  if (!(as.character(personID) %in% row.names(results$scoresOrig) &
+       length(personID) == 1 &
+       (is.character(personID) | is.numeric(personID)))) {
+    stop('Invalid personID argument.')
+  }
+  if (!(is.numeric(probBounds) &
+        length(probBounds) == 2 &
+        all(probBounds <= 1 & probBounds >= 0) &
+        (probBounds[1] < probBounds[2]))) {
+    stop('Invalid probBounds argument.')
+  }
 
   origPar = par(no.readonly = TRUE) # to reset graphical parameters after
 

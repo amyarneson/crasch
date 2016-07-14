@@ -187,10 +187,16 @@ infit.MNSQ <- function(results, itemOrder = NULL, params = "items",
   checkResults(results)
   checkWrite(writeout, fileSuffix)
   checkImageType(imageType)
+  checkItemOrder(itemOrder, results$itemInfo)
+  if (!params %in% c("items", "steps")) {
+    stop('Invalid params argument.')
+  }
+  # error if all items are dichotomous
+    if (ncol(results$itemPars) == 1) {
+      stop('All items are dichotomous. There are no step parameters. Use params="items".')
+    }
 
   origPar = par(no.readonly = TRUE) # to reset graphical parameters after
-
-  # return error if all items are dichotomous (no steps!)
 
   if (is.null(itemOrder)) {
     plotOrder <- 1:results$estSummary$I
@@ -322,6 +328,20 @@ CPC.graph <- function(results, itemOrder = NULL, palette = "BASS",
   checkResults(results)
   checkWrite(writeout, fileSuffix)
   checkImageType(imageType)
+  checkItemOrder(itemOrder, results$itemInfo)
+  if (!is.logical(observed)) {
+    stop('Invalid observed argument.')
+  }
+  if (!(is.numeric(minCell) & minCell > 0 & minCell %% 1 != 0)) {
+    stop('Invalid minCell argument.')
+  }
+  if (!is.numeric(focusTheta)) {
+    stop('Invalid focusTheta argument.')
+  }
+
+  if (minCell < 10) {
+    warning('Low cell counts (<10) will be graphed. Interpret with caution.')
+  }
 
   origPar = par(no.readonly = TRUE) # to reset graphical parameters after
 
@@ -474,6 +494,7 @@ ICC.graph <- function(results, itemOrder = NULL, palette = "BASS",
   checkResults(results)
   checkWrite(writeout, fileSuffix)
   checkImageType(imageType)
+  checkItemOrder(itemOrder, results$itemInfo)
 
   origPar = par(no.readonly = TRUE) # to reset graphical parameters after
 

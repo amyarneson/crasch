@@ -5,23 +5,29 @@
                          missingAs0, longFormat,
                          persMethod, consecutive,
                          writeout) {
-    stopifnot(is.data.frame(scores) | is.character(scores),
-              is.null(itemInfo) | is.data.frame(itemInfo) | is.character(itemInfo),
-              is.null(consInfo) | is.data.frame(consInfo) | is.character(consInfo),
-              is.null(varsInfo) | is.data.frame(varsInfo) | is.character(varsInfo),
-              estPackage %in% c("mirt","TAM"),
-              is.logical(retainOrig),
-              is.logical(missingAs0),
-              is.logical(longFormat),
-              persMethod %in% c("EAP","MLE","WLE","MAP")
-    )
+    stopifnot(is.data.frame(scores) | is.character(scores))
+    stopifnot(is.null(itemInfo) | is.data.frame(itemInfo) | is.character(itemInfo))
+    stopifnot(is.null(consInfo) | is.data.frame(consInfo) | is.character(consInfo))
+    stopifnot(is.null(varsInfo) | is.data.frame(varsInfo) | is.character(varsInfo))
+    stopifnot(estPackage %in% c("mirt","TAM"))
+    stopifnot(is.logical(retainOrig))
+    stopifnot(is.logical(missingAs0))
+    stopifnot(is.logical(longFormat))
+    stopifnot(persMethod %in% c("EAP","MLE","WLE","MAP"))
 
     if ( longFormat ) {
       # check for correct column names
 
       # check for item.ID & cons.ID mismatches/missings
 
+      # check that all item.IDs in itemInfo show up at least once in scores
+
       # check that item names match in scores and itemInfo files
+
+      # check that all person IDs are unique (may have to do this after reshape,
+      #                                       check that the number of columns
+      #                                       in wide matches the number of
+      #                                       items in itemInfo)
 
     } else {
       # check that item names match in scores and itemInfo files
@@ -31,6 +37,11 @@
                    paste(problem,collapse=" ,")),"\n",
              "Check the item names in scores and itemInfo objects.\n\n")
       }
+      # check that all person IDs are unique
+      if (length(unique(row.names(scores))) != nrow(scores)) {
+        stop('Some respondent ID is repeated. All IDs must be unique.')
+      }
+
     }
 
     # check for correct column names in information objects
@@ -48,8 +59,9 @@
 
 
     # check that all item IDs are unique
-
-    # check that all person IDs are unique
+    if (length(unique(itemInfo$item.ID)) != nrow(itemInfo)) {
+      stop('Some item.ID is repeated. All item.IDs must be unique.')
+    }
 
     # for true multidimensional analysis, TAM cannot produce anything but EAPs
     if ( estPackage == "TAM" && consecutive == FALSE && nrow(consInfo > 1)  && persMethod != "EAP" ) {
@@ -160,9 +172,29 @@ areColors <- function(x) {
   }
 
 ################################################################################
-# check that palette is correct format
-# actually this will be done within each function on its own since the vector
-#  length will differ!
+# check that dim is correct format
+
+  checkDim <- function(dim, consInfo) {
+    if (!is.numeric(dim)) {
+      stop('Invalid dim argument.')
+    }
+    if (!(all(dim <= nrow(consInfo)) &
+          all(dim %% 1 == 0) &
+          all(dim > 0))) {
+      stop('Invalid dim argument.')
+    }
+  }
 
 ################################################################################
-# check that dim is correct format
+# check that itemOrder is correct format
+
+  checkItemOrder <- function(itemOrder, itemInfo) {
+    if (!is.numeric(itemOrder)) {
+      stop('Invalid itemOrder argument.')
+    }
+    if (!(all(itemOrder <= nrow(itemInfo)) &
+          all(itemOrder %% 1 == 0) &
+          all(itemOrder > 0))) {
+      stop('Invalid itemOrder argument.')
+    }
+  }

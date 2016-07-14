@@ -40,6 +40,20 @@ info.graph <- function(results, dim = NULL, type = "SEM", completeOnly = TRUE,
   checkResults(results)
   checkWrite(writeout, fileSuffix)
   checkImageType(imageType)
+  checkDim(dim, results$consInfo)
+  if (!type %in% c("SEM", "TIC", "IIC")) {
+    stop('Invalid type argument.')
+  }
+  if (!is.logical(completeOnly)) {
+    stop('Invalid completeOnly argument.')
+  }
+  if (!is.numeric(thetaGrid)) {
+    stop('Invalid thetaGrid argument.')
+  }
+
+  if (length(thetaGrid) < 100) {
+    warning('It is recommended that thetaGrid contains >= 100 values.  Plot may look "choppy."  Interpret with caution.')
+  }
 
   origPar = par(no.readonly = TRUE) # so graphical parameters can be reset after
   par(mai = c(1.36, 1.093333, 1.093333, 0.56),
@@ -235,6 +249,8 @@ wm <- function(results, dim = NULL, itemOrder = "item", palette = "BASS",
   checkResults(results)
   checkWrite(writeout, fileSuffix)
   checkImageType(imageType)
+  checkDim(dim, results$consInfo)
+  checkItemOrder(itemOrder, results$itemInfo)
 
   origPar = par(no.readonly = TRUE) # to reset graphical parameters after
 
