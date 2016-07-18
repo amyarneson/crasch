@@ -164,8 +164,8 @@ TAM.pers <- function(TAMresults, data, itemInfo, itemThres, consInfo,
     colnames(persRaw) <- colnames(persMax) <- consInfo$short.name
     row.names(persRaw) <- row.names(persMax) <- row.names(data)
   } else {
-    persRaw <- TAMresults$person$score
-    persMax <- TAMresults$person$max
+    persRaw <- data.frame(TAMresults$person$score)
+    persMax <- data.frame(TAMresults$person$max)
   }
 
   return(list(Pars = persPars,

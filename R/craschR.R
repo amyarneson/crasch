@@ -270,14 +270,14 @@ craschR <- function(scores, itemInfo = NULL, consInfo = NULL, varsInfo = NULL,
       }
       names(persFit) <- consInfo$short.name
     } else if ( D == 1 ) {
-      persFit <- data.frame(matrix(nrow = N, ncol = 4))
-      persFit[complete.cases(persEsts$Pars),] <-
+      persFit <- list(data.frame(matrix(nrow = N, ncol = 4)))
+      persFit[[1]][complete.cases(persEsts$Pars),] <-
         sirt::pcm.fit(b = -results$AXsi[,-1],
                       theta =
                         as.matrix(persEsts$Pars[complete.cases(persEsts$Pars),
                                                 1]),
                       dat = wide[complete.cases(persEsts$Pars),])$personfit[,-1]
-      colnames(persFit) <- c("outfit", "outfit_t", "infit", "infit_t")
+      colnames(persFit[[1]]) <- c("outfit", "outfit_t", "infit", "infit_t")
     } else {
       # ?? multi dimensional person fit ??
       warning('Person fit statistics are not available for non-consecutive multi-dimensional analyses using TAM.')

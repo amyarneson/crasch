@@ -2,12 +2,12 @@
 % Please edit documentation in R/craschR.R
 \name{craschR}
 \alias{craschR}
-\title{Produce item and person estimates and fit statistics.}
+\title{Item and person estimates and fit statistics.}
 \usage{
 craschR(scores, itemInfo = NULL, consInfo = NULL, varsInfo = NULL,
   estPackage = "mirt", retainOrig = FALSE, missingAs0 = FALSE,
   longFormat = FALSE, persMethod = "EAP", consecutive = FALSE,
-  writeout = TRUE, imageType = "pdf", fileSuffix = NULL, ...)
+  writeout = TRUE, fileSuffix = NULL, ...)
 }
 \arguments{
 \item{scores}{A data frame or path to CSV file in crasch format with the
@@ -113,6 +113,6 @@ A list with the following entries
   \item{varsInfo}{}
 }
 \description{
-Produce item and person estimates and fit statistics.
+Item and person estimates and fit statistics.
 }
 

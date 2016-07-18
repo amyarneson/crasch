@@ -2,6 +2,7 @@
 
 export(CPC.graph)
 export(ICC.graph)
+export(KIDMAP)
 export(craschR)
 export(infit.MNSQ)
 export(info.graph)

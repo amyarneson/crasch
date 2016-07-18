@@ -4,8 +4,8 @@
 \alias{item.scores}
 \title{Create a stacked bar graph showing score level frequencies per item.}
 \usage{
-item.scores(results, dim = NULL, freqs = TRUE, palette = "Set3",
-  writeout = FALSE, imageType = "pdf", filePrefix = NULL, ...)
+item.scores(results, dim = NULL, freqs = TRUE, palette = "BASS",
+  writeout = FALSE, imageType = "pdf", fileSuffix = NULL, ...)
 }
 \arguments{
 \item{results}{The output from a run of \code{craschR}. (link?)}
@@ -30,12 +30,12 @@ include an index (if more than one graph is produced) and the
 \code{writeout = TRUE}). Supported types:
 \code{c("pdf","svg","jpeg","bmp","tiff","png")}.}
 
-\item{...}{Additional arguments to be passed to \code{barplot} function.}
-
 \item{fileSuffix}{A character string that will be affixed to the end of each
 file name (if \code{writeout = TRUE}). Use this if you are conducting
 multiple analyses in the same working directory and do not wish for your
 existing files to be overwritten.}
+
+\item{...}{Additional arguments to be passed to \code{barplot} function.}
 }
 \value{
 Creates a stacked bar plot and returns a list with the following

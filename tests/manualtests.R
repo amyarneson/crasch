@@ -1,8 +1,11 @@
+SUP <- craschR(scores = SUPwide, itemInfo = SUPitem, consInfo = SUPcons,
+               varsInfo = SUPvars, estPackage = "TAM", retainOrig = TRUE,
+               consecutive = FALSE, writeout = FALSE)
+
 AMY <- craschR(scores = AMYwide, itemInfo = AMYitem, consInfo = AMYcons,
                varsInfo = AMYvars, estPackage = "TAM", retainOrig = TRUE,
                consecutive = TRUE, writeout = FALSE)
-item.scores(AMY)
-pers.hist(AMY)
+
 wm(AMY)
 wm(AMY, byCat = TRUE)
 ICC.graph(AMY)
@@ -16,8 +19,3 @@ info.graph(AMY, type = "IIC", dim = 1)
 info.graph(AMY, dim = 1, type = "TIC", completeOnly = FALSE)
 info.graph(AMY, dim = 2)
 item.analysis(AMY)
-infit.MNSQ(AMY)
-infit.MNSQ(AMY, params = "steps")
-infit.MNSQ(AMY, itemOrder = c(1,2,4,6,8,10), params = "steps")
-KIDMAP(AMY, personID = 131)
-KIDMAP(AMY, personID = "131", dim = 2)

@@ -138,28 +138,31 @@ areColors <- function(x) {
 # check that results is correct format
 
   checkResults <- function(results) {
-    stopifnot(is.list(results))
-    stopifnot(length(results) == 19 | length(results) == 20)
-    stopifnot(is.matrix(results$itemPars))
-    stopifnot(is.matrix(results$itemSEs))
-    stopifnot(is.matrix(results$itemThres))
-    stopifnot(is.data.frame(results$itemFit))
-    stopifnot(is.data.frame(results$persPars))
+    if (!(is.list(results) &
+         (length(results) == 19 | length(results) == 20) &
+         is.matrix(results$itemPars) &
+         is.matrix(results$itemSEs) &
+         is.matrix(results$itemThres) &
+         is.data.frame(results$itemFit) &
+         is.data.frame(results$persPars) &
+         is.data.frame(results$persRaw) &
+         is.data.frame(results$persMax) &
+         is.list(results$persFit) &
+         is.list(results$estSummary) &
+         is.list(results$classicalStats) &
+         is.list(results$empties) &
+         is.data.frame(results$scoresOrig) &
+         is.data.frame(results$scoresRecoded) &
+         is.data.frame(results$itemInfo) &
+         is.data.frame(results$consInfo) &
+         (is.data.frame(results$varsInfo) | is.null(results$varsInfo))) ) {
+      stop('Invalid results argument. Provide craschR output.')
+    }
+
     #stopifnot(is.data.frame(results$persSEs)) # not used in any functions
-    stopifnot(is.data.frame(results$persRaw))
-    stopifnot(is.data.frame(results$persMax))
-    stopifnot(is.list(results$persFit))
     #stopifnot(is.list(results$popDist)) # not used in any functions as of now
     #stopifnot(is.numeric(results$sepRel)) # not used in any functions as of now
-    stopifnot(is.list(results$estSummary))
-    stopifnot(is.list(results$classicalStats))
-    stopifnot(is.list(results$empties))
-    stopifnot(is.data.frame(results$scoresOrig))
-    stopifnot(is.data.frame(results$scoresRecoded))
-    stopifnot(is.data.frame(results$itemInfo))
-    stopifnot(is.data.frame(results$consInfo))
-    stopifnot(is.data.frame(results$varsInfo))
-    stopifnot(!any(sapply(results, is.null)))
+
   }
 
 ################################################################################

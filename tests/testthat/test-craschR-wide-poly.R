@@ -49,4 +49,10 @@ test_that("craschR produces expected errors", {
                               estPackage = "TAM", retainOrig = FALSE,
                               consecutive = FALSE, writeout = FALSE)
                )
+
+  expect_error(bad <- craschR(scores = SUPwide, itemInfo = SUPitem, consInfo = SUPcons,
+                              varsInfo = NULL, estPackage = "TAM", retainOrig = FALSE,
+                              consecutive = TRUE, writeout = FALSE),
+               "Unidimensional analysis cannot be consecutive. Use consecutive=FALSE."
+  )
 })
