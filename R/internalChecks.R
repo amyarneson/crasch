@@ -41,16 +41,22 @@
       if (length(unique(row.names(scores))) != nrow(scores)) {
         stop('Some respondent ID is repeated. All IDs must be unique.')
       }
-
+      # check that there are the same number of items in scores and itemInfo
+      if (ncol(scores) != nrow(itemInfo)) {
+        stop('Differing number of items in scores and itemInfo.')
+      }
     }
 
     # check for correct column names in information objects
-    if ( sum(!colnames(itemInfo)[1:5] ==
-               c("item.ID","item.name","cons.ID","item.type","fixed")) > 0 ) {
+    Ncat <- ncol(consInfo) - 3
+    if ( sum(!colnames(itemInfo) ==
+               c("item.ID","item.name","cons.ID","item.type","fixed",
+                 paste0("cat",1:Ncat))) > 0 ) {
       stop("Check column names in itemInfo object. They must exactly match specified format.\n\n")
     }
-    if ( sum(!colnames(consInfo)[1:3] ==
-               c("cons.ID","long.name","short.name")) > 0 ) {
+    if ( sum(!colnames(consInfo) ==
+               c("cons.ID","long.name","short.name",
+                 paste0("cat",1:Ncat))) > 0 ) {
       stop("Check column names in consInfo object. They must exactly match specified format.\n\n")
     }
 
@@ -67,6 +73,11 @@
     if ( estPackage == "TAM" && consecutive == FALSE && nrow(consInfo > 1)  && persMethod != "EAP" ) {
       warning("For true multidimensional analysis using TAM, only EAPs are available. persMethod has defaulted to 'EAP'.")
       persMethod <- "EAP"
+    }
+
+    # check for mismatches of function arguments
+    if ( nrow(consInfo) == 1 & consecutive ) {
+      stop('Unidimensional analysis cannot be consecutive. Use consecutive=FALSE.')
     }
   }
 
