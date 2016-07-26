@@ -17,7 +17,7 @@
 #'
 #' @export
 
-item.analysis <- function(results, writeout = FALSE, filePrefix= NULL) {
+item.analysis <- function(results, writeout = FALSE, fileSuffix= NULL) {
   checkResults(results)
   checkWrite(writeout, fileSuffix)
 

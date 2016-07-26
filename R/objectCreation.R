@@ -21,20 +21,22 @@ sum.scores <- function(data, type = "raw") {
 classical.test <- function(data, itemInfo, consInfo, sepRel) {
   output = list()
   D = nrow(consInfo)
-  I = nrow(itemInfo)
-  N = nrow(data)
   for (d in 1:D) {
+    inclItems <- which(itemInfo$cons.ID == consInfo$cons.ID[d])
+    data0 <- data[, inclItems]
+    N = nrow(data0)
     # recode missings to 0
-    dataMiss <- data[, itemInfo$cons.ID == consInfo$cons.ID[d] ]
-    dataMiss[is.na(data[, itemInfo$cons.ID == consInfo$cons.ID[d] ])] = 0
+    dataMiss <- data0
+    dataMiss[is.na(data0)] = 0
+    I <- length(inclItems)
     # complete cases only
-    dataComp <- data[complete.cases(data), itemInfo$cons.ID == consInfo$cons.ID[d]]
+    dataComp <- data0[complete.cases(data0),]
     if (nrow(dataComp)==0) {
       Ncomp = 0
       Icomp <- meanComp <- sdComp <- NA
     } else {
       Ncomp <- nrow(dataComp)
-      Icomp <- I
+      Icomp <- ncol(dataComp)
       meanComp <- mean(rowSums(dataComp))
       sdComp <- sd(rowSums(dataComp))
     }

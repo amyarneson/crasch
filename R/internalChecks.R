@@ -31,7 +31,7 @@
 
     } else {
       # check that item names match in scores and itemInfo files
-      problem = which(!(itemInfo$item.name %in% colnames(scores)))
+      problem = which(itemInfo$item.name != colnames(scores))
       if ( length(problem) > 0 ) {
         stop(paste("Item name mismatch(es) at:",
                    paste(problem,collapse=" ,")),"\n",
@@ -172,7 +172,7 @@ areColors <- function(x) {
     stopifnot(is.logical(writeout),
               is.character(fileSuffix) | is.null(fileSuffix))
     if (writeout == FALSE) {
-      warning('No output was written to file. If you wish to write to file, use writeout=TRUE.')
+      message('No output was written to file. If you wish to write to file, use writeout=TRUE.')
     }
   }
 

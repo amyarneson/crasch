@@ -4,7 +4,7 @@
 \alias{item.analysis}
 \title{Creates item analysis tables.}
 \usage{
-item.analysis(results, writeout = FALSE, filePrefix = NULL)
+item.analysis(results, writeout = FALSE, fileSuffix = NULL)
 }
 \arguments{
 \item{results}{The output from a run of \code{craschR}. (link?)}
