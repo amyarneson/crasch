@@ -1,14 +1,6 @@
 library(crasch)
 context("craschR: wide format, polytomous data")
 
-test_that("craschR produces expected warnings", {
-  expect_warning(SUP <- craschR(scores = SUPwide, itemInfo = SUPitem,
-                                consInfo = SUPcons, varsInfo = SUPvars,
-                                estPackage = "TAM", retainOrig = TRUE,
-                                consecutive = FALSE, writeout = FALSE),
-                 'No output was written to file. If you wish to write to file, use writeout=TRUE.')
-})
-
 test_that("craschR produces expected errors", {
   # mismatched input files
   expect_error(bad <- craschR(scores = SUPwide, itemInfo = AMYitem,
@@ -70,32 +62,42 @@ test_that("craschR produces identical results for consecutive analyses run
   # thresholds
     expect_equal(AMY$itemThres[ADProws,], ADP$itemThres, tolerance = .01)
     expect_equal(AMY$itemThres[SUProws,], SUP$itemThres, tolerance = .01)
-  # itemFit for items (not steps)
-    expect_equal(AMY$itemFit[ADProws,], ADP$itemFit[1:13,], tolerance = .01)
-    expect_equal(AMY$itemFit[SUProws,], SUP$itemFit[1:15,], tolerance = .01)
+  # itemFit for items (not steps) - just infit and outfit
+    expect_equal(c(as.matrix(AMY$itemFit[ADProws, c(2,6)])),
+                 c(as.matrix(ADP$itemFit[1:13, c(2,6)])), tolerance = .01)
+    expect_equal(c(as.matrix(AMY$itemFit[SUProws, c(2,6)])),
+                 c(as.matrix(SUP$itemFit[1:15, c(2,6)])), tolerance = .01)
   # person estimates
-    expect_equal(AMY$persPars[,2], ADP$persPars, tolerance = .01)
-    expect_equal(AMY$persPars[,1], SUP$persPars, tolerance = .01)
+    expect_equal(AMY$persPars[,2], c(as.matrix(ADP$persPars)), tolerance = .01)
+    expect_equal(AMY$persPars[,1], c(as.matrix(SUP$persPars)), tolerance = .01)
   # person standard errors
-    expect_equal(AMY$persSEs[,2], ADP$persSEs, tolerance = .01)
-    expect_equal(AMY$persSEs[,1], SUP$persSEs, tolerance = .01)
+    expect_equal(AMY$persSEs[,2], c(as.matrix(ADP$persSEs)), tolerance = .01)
+    expect_equal(AMY$persSEs[,1], c(as.matrix(SUP$persSEs)), tolerance = .01)
   # persRaw
-    expect_equal(AMY$persRaw[,2], ADP$persRaw, tolerance = .01)
-    expect_equal(AMY$persRaw[,1], SUP$persRaw, tolerance = .01)
+    expect_equal(AMY$persRaw[,2], c(as.matrix(ADP$persRaw)), tolerance = .01)
+    expect_equal(AMY$persRaw[,1], c(as.matrix(SUP$persRaw)), tolerance = .01)
   # persMax
-    expect_equal(AMY$persMax[,2], ADP$persMax, tolerance = .01)
-    expect_equal(AMY$persMax[,1], SUP$persMax, tolerance = .01)
+    expect_equal(AMY$persMax[,2], c(as.matrix(ADP$persMax)),
+                      tolerance = .01)
+    expect_equal(AMY$persMax[,1], c(as.matrix(SUP$persMax)),
+                      tolerance = .01)
   # persFit
     expect_equal(AMY$persFit[[2]], ADP$persFit[[1]], tolerance = .01)
     expect_equal(AMY$persFit[[1]], SUP$persFit[[1]], tolerance = .01)
   # popDist
-    expect_equal(AMY$popDist$mean[2], ADP$popDist$mean, tolerance = .01)
-    expect_equal(AMY$popDist$mean[1], SUP$popDist$mean, tolerance = .01)
-    expect_equal(AMY$popDist$var.cov[2,2], ADP$popDist$var.cov, tolerance = .01)
-    expect_equal(AMY$popDist$var.cov[1,1], SUP$popDist$var.cov, tolerance = .01)
+    expect_equal(AMY$popDist$mean[2], as.numeric(ADP$popDist$mean),
+                 tolerance = .01)
+    expect_equal(AMY$popDist$mean[1], as.numeric(SUP$popDist$mean),
+                 tolerance = .01)
+    expect_equal(AMY$popDist$var.cov[2,2], as.numeric(ADP$popDist$var.cov),
+                 tolerance = .01)
+    expect_equal(AMY$popDist$var.cov[1,1], as.numeric(SUP$popDist$var.cov),
+                 tolerance = .01)
   # sepRel
-    expect_equal(AMY$sepRel[2], ADP$sepRel, tolerance = .01)
-    expect_equal(AMY$sepRel[1], SUP$sepRel, tolerance = .01)
+    expect_equal(as.numeric(AMY$sepRel[2]), as.numeric(ADP$sepRel),
+                 tolerance = .01)
+    expect_equal(as.numeric(AMY$sepRel[1]), as.numeric(SUP$sepRel),
+                 tolerance = .01)
   # nothing to check for estSummary
   # classicalStats
     expect_equal(AMY$classicalStats$ADP, ADP$classicalStats$ADP,
