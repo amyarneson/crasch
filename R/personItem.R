@@ -1,5 +1,5 @@
 ###############################################################################
-#' Plots the standard error of measurement or test information fucntion.
+#' Plots the standard error of measurement or test information function.
 #'
 #' @param results The output from a run of \code{craschR}. (link?)
 #' @param dim Specify which dimension(s) to create graphic/tables for.  If
@@ -60,10 +60,14 @@ info.graph <- function(results, dim = NULL, type = "SEM", completeOnly = TRUE,
       mar = c(5.1, 4.1, 4.1, 2.1),
       xpd = FALSE)
 
-  if (palette == "BASS") {
+  if (identical(palette, "BASS")) {
     color <- c(curve = "gray52", points = "#80b1d3")
-  } else if (palette %in% row.names(brewer.pal.info)) {
-    color <- brewer.pal(3, palette)
+  } else if (length(palette) == 1) {
+    if (palette %in% row.names(brewer.pal.info)) {
+      color <- brewer.pal(3, palette)
+    } else {
+      stop('Invalid palette argument.')
+    }
   } else if (all(areColors(palette)) & length(palette) == 2) {
     color <- palette
   } else {
@@ -303,12 +307,16 @@ wm <- function(results, dim = NULL, byCat = FALSE, palette = "BASS",
     toGraph <- results$itemThres
   }
 
-  if (palette == "BASS") {
-    color <- c("black", "#80b1d3")
-  } else if (palette %in% row.names(brewer.pal.info)) {
-    color <- RColorBrewer::brewer.pal(3, palette)
+  if (length(palette) == 1) {
+    if (palette == "BASS") {
+      color <- c("black", "#80b1d3")
+    } else if (palette %in% row.names(brewer.pal.info)) {
+      color <- RColorBrewer::brewer.pal(3, palette)
+    } else {
+      stop('Invalid palette argument.')
+    }
   } else {
-    stop('Invalid palette argument.')
+    stop('Invalide palette argument.')
   }
 
   for (i in 1:length(thresList)) {

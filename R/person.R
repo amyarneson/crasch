@@ -35,10 +35,14 @@ pers.hist <- function(results, dim = NULL, palette = "BASS",
   checkDim(dim, results$consInfo)
 
   origPar = par(no.readonly = TRUE) # to reset graphical parameters after
-  if (palette == "BASS") {
+  if (identical(palette, "BASS")) {
     color <- c(bar = "#80b1d3", curve = "gray")
-  } else if (palette %in% row.names(brewer.pal.info)) {
-    color <- RColorBrewer::brewer.pal(3, palette)
+  } else if (length(palette) == 1) {
+    if (palette %in% row.names(brewer.pal.info)) {
+      color <- RColorBrewer::brewer.pal(3, palette)
+    } else {
+      stop('Invalid palette argument.')
+    }
   } else if (all(areColors(palette)) & length(palette)==2) {
     color <- palette
   } else {
@@ -156,14 +160,18 @@ KIDMAP <- function(results, personID, dim = NULL, probBounds = c(.25, .75),
     stop('Invalid dim argument.')
   }
 
-  if (palette == "BASS") {
+  if (identical(palette, "BASS")) {
     color = c(expected = rgb(red = 128, green = 177, blue = 211, alpha = 127.5,
                              maxColorValue = 255),
               surprise = rgb(red = 255, green = 229, blue = 0, alpha = 127.5,
                              maxColorValue = 255),
               points = "#80b1d3")
-  } else if (palette %in% row.names(brewer.pal.info)) {
-    color <- RColorBrewer::brewer.pal(3, palette)
+  } else if (length(palette) == 1) {
+    if (palette %in% row.names(brewer.pal.info)) {
+      color <- RColorBrewer::brewer.pal(3, palette)
+    } else {
+      stop('Invalid palette argument.')
+    }
   } else if (all(areColors(palette)) & length(palette) == 3) {
     color <- palette
   } else {

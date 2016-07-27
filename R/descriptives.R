@@ -76,20 +76,23 @@ item.scores <- function(results, dim = NULL, freqs = TRUE, palette = "BASS",
     dimnames(tograph) <- list(cons[4:ncol(cons)],
                               results$itemInfo$item.name[
                 which(results$itemInfo$cons.ID == results$consInfo$cons.ID[d])])
-
-    if ( palette %in% row.names(brewer.pal.info) ) {
-      # check that there are enough colors in palette
-      if ( K <= RColorBrewer::brewer.pal.info$maxcolors[
-        which(row.names(RColorBrewer::brewer.pal.info) == palette)] ) {
-        color = RColorBrewer::brewer.pal(K, palette)
+    if (length(palette) == 1) {
+      if ( palette %in% row.names(brewer.pal.info) ) {
+        # check that there are enough colors in palette
+        if ( K <= RColorBrewer::brewer.pal.info$maxcolors[
+          which(row.names(RColorBrewer::brewer.pal.info) == palette)] ) {
+          color = RColorBrewer::brewer.pal(K, palette)
+        } else {
+          stop('Too many levels for chosen palette. Choose a different palette.')
+        }
+      } else if ( palette == "grey" | palette == "gray" ) {
+        color = gray(level = rev(1:nrow(tograph)/nrow(tograph)))
+      } else if ( palette == "BASS" ) {
+        color = rainbow(n = nrow(tograph), start = 4/6, end = 4/6+.001,
+                        alpha = seq(.3,.9,length.out = nrow(tograph)))
       } else {
-        stop('Too many levels for chosen palette. Choose a different palette.')
+        stop('Invalid palette argument.')
       }
-    } else if ( palette == "grey" | palette == "gray" ) {
-      color = gray(level = rev(1:nrow(tograph)/nrow(tograph)))
-    } else if ( palette == "BASS" ) {
-      color = rainbow(n = nrow(tograph), start = 4/6, end = 4/6+.001,
-                      alpha = seq(.3,.9,length.out = nrow(tograph)))
     } else {
       stop('Invalid palette argument.')
     }

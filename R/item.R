@@ -256,12 +256,16 @@ infit.MNSQ <- function(results, itemOrder = NULL, params = "items",
     }
   }
 
-  if (palette == "BASS") {
+  if (identical(palette, "BASS")) {
     color <- c(acceptable = rgb(red = 128, green = 177, blue = 211,
                                 alpha = 127.5, maxColorValue = 255),
                points = "#80b1d3")
-  } else if (palette %in% row.names(brewer.pal.info)) {
-    color <- brewer.pal(3, palette)
+  } else if (length(palette) == 1) {
+    if (palette %in% row.names(brewer.pal.info)) {
+      color <- brewer.pal(3, palette)
+    } else {
+      stop('Invalid palette argument.')
+    }
   } else if (all(areColors(palette)) & length(palette)==2) {
     color <- palette
   } else {
@@ -360,26 +364,30 @@ CPC.graph <- function(results, itemOrder = NULL, palette = "BASS",
     K_i <- sum(!is.na(itemThres[i,]))
     thres <- c(itemThres[i, !is.na(itemThres[i,])], Inf)
 
-    if (palette == "BASS") {
-      if (K_i == 2) {
-        color = rgb(red = 128, green = 177, blue = 211, alpha = c(140,255),
-                    maxColorValue = 255)
-      } else {
-        color = rgb(red = 128, green = 177, blue = 211,
-                    alpha = seq(80, 255, length.out = K_i), maxColorValue = 255)
+    if (length(palette) == 1) {
+      if (palette == "BASS") {
+        if (K_i == 2) {
+          color = rgb(red = 128, green = 177, blue = 211, alpha = c(140,255),
+                      maxColorValue = 255)
+        } else {
+          color = rgb(red = 128, green = 177, blue = 211,
+                      alpha = seq(80, 255, length.out = K_i), maxColorValue = 255)
+        }
+        fillcol = "#80b1d3"
+      } else if (palette %in% row.names(brewer.pal.info)) {
+        color <- brewer.pal(max(K_i,3), palette)
+        fillcol = "white"
+      } else if (palette == "grey" | palette == "gray") {
+        if (K_i == 2) {
+          color = gray(level = c(.75, .6))
+        } else {
+          color = gray(level = seq(from = .75, to = .25, length.out = K_i))
+        }
+        fillcol = "gray"
+      }  else {
+        stop('Invalid palette argument.')
       }
-      fillcol = "#80b1d3"
-    } else if (palette %in% row.names(brewer.pal.info)) {
-      color <- brewer.pal(max(K_i,3), palette)
-      fillcol = "white"
-    } else if (palette == "grey" | palette == "gray") {
-      if (K_i == 2) {
-        color = gray(level = c(.75, .6))
-      } else {
-        color = gray(level = seq(from = .75, to = .25, length.out = K_i))
-      }
-      fillcol = "gray"
-    }  else {
+    } else {
       stop('Invalid palette argument.')
     }
 
@@ -415,20 +423,21 @@ CPC.graph <- function(results, itemOrder = NULL, palette = "BASS",
                             cumsum(rev(x))
                           }))[,seq((K_i+1), 1, by = -1)]
       } else {
-        linecol = "grey"
+        linecol = "black"
+        vlinecol = "grey"
         x <- c(seq(from = -6, to = 6, length.out = 500))
         y1 <- c(boot::inv.logit(x - thres[k]))
         y2 <- c(boot::inv.logit(x - thres[k+1]))
         polygon(c(x, rev(x)), c(y1, rev(y2)), col = color[k], border = NA)
       }
       curve(boot::inv.logit(x - thres[k]), from = -6, to = 6, add = TRUE,
-            col = "black", lwd = 2)
+            col = linecol, lwd = 2)
       if (observed) {
         points(sort(unique(theta))[cellCts[,(k+1)] >= minCell],
                empPts[cellCts[,(k+1)] >= minCell,(k+1)], col = color[k],
                pch = 20)
       } else {
-        abline(v = focusTheta, col = linecol, lty = 2, lwd = 2)
+        abline(v = focusTheta, col = vlinecol, lty = 2, lwd = 2)
         for (a in 1:length(focusTheta)) {
           bounds <- boot::inv.logit(focusTheta[a] - thres)
           L <- placement <- rep(NA, length(bounds) + 1)
@@ -505,15 +514,19 @@ ICC.graph <- function(results, itemOrder = NULL, palette = "BASS",
     itemInfo <- results$itemInfo[itemOrder,]
     itemThres <- results$itemThres[itemOrder,]
   } else {
-    stop('itemOrder must be a numeric vector or NULL.')
+    stop('Invalid itemOrder argument.')
   }
   I <- nrow(itemInfo)
   lty <- rep(1:4, 3)  # no items with >12 categories will be graphed
 
-  if (palette == "BASS") {
+  if (identical(palette, "BASS")) {
     color <- rep(c("#80b1d3", "darkgoldenrod1", "gray52"), 4)
-  } else if (palette %in% row.names(brewer.pal.info)) {
-    color <- rep(brewer.pal(3, palette), 4)
+  } else if (length(palette) == 1) {
+    if (palette %in% row.names(brewer.pal.info)) {
+      color <- rep(brewer.pal(3, palette), 4)
+    } else {
+      stop('Invalid palette argument.')
+    }
   } else if (all(areColors(palette)) & length(palette)==3) {
     color <- rep(palette, 4)
   } else {

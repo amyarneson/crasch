@@ -43,6 +43,10 @@ test_that("item.scores produces correct frequencies/proportions", {
 test_that("item.scores produces expected errors", {
   # input is not craschR results
   expect_error(item.scores(AMYwide))
+  # palette issues
+  expect_error(item.scores(SUP, palette = "pink"), 'Invalid palette argument')
+  expect_error(item.scores(SUP, palette = c("pink", "green")),
+               'Invalid palette argument.')
 })
 
 test_that("item.scores works w/different combinations of arguments", {

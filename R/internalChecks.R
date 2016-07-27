@@ -31,11 +31,8 @@
 
     } else {
       # check that item names match in scores and itemInfo files
-      problem = which(itemInfo$item.name != colnames(scores))
-      if ( length(problem) > 0 ) {
-        stop(paste("Item name mismatch(es) at:",
-                   paste(problem,collapse=" ,")),"\n",
-             "Check the item names in scores and itemInfo objects.\n\n")
+      if ( !identical(itemInfo$item.name, colnames(scores)) ) {
+        stop(paste("Item name mismatch(es) in scores and itemInfo."))
       }
       # check that all person IDs are unique
       if (length(unique(row.names(scores))) != nrow(scores)) {

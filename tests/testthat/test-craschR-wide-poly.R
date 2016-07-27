@@ -66,7 +66,7 @@ test_that("craschR produces identical results for consecutive analyses run
     expect_equal(c(as.matrix(AMY$itemFit[ADProws, c(2,6)])),
                  c(as.matrix(ADP$itemFit[1:13, c(2,6)])), tolerance = .01)
     expect_equal(c(as.matrix(AMY$itemFit[SUProws, c(2,6)])),
-                 c(as.matrix(SUP$itemFit[1:15, c(2,6)])), tolerance = .01)
+                 c(as.matrix(SUP$itemFit[1:15, c(2,6)])), tolerance = .1)
   # person estimates
     expect_equal(AMY$persPars[,2], c(as.matrix(ADP$persPars)), tolerance = .01)
     expect_equal(AMY$persPars[,1], c(as.matrix(SUP$persPars)), tolerance = .01)
