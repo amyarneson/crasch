@@ -11,7 +11,9 @@
 #'
 #' @export
 
-split.halves <- function(results1, results2) {
+# note that Split is capitalized so that this does not get interpreted as a
+#  method for the base function split()
+Split.halves <- function(results1, results2) {
   checkResults(results1)
   checkResults(results2)
 
@@ -47,6 +49,6 @@ split.halves <- function(results1, results2) {
     pers2[c(which(pers2[,1] == -Inf), which(pers2[,1] == Inf)),] = NA
   }
 
-  r = cor(pers1, pers2, method = "pearson", use = "complete.obs")
+  r <- cor(pers1, pers2, method = "pearson", use = "complete.obs")
   as.numeric( (2*r) /(1 + r) )
 }
