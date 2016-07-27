@@ -67,9 +67,9 @@
     }
 
     # for true multidimensional analysis, TAM cannot produce anything but EAPs
-    if ( estPackage == "TAM" && consecutive == FALSE && nrow(consInfo > 1)  && persMethod != "EAP" ) {
-      warning("For true multidimensional analysis using TAM, only EAPs are available. persMethod has defaulted to 'EAP'.")
-      persMethod <- "EAP"
+    if ( estPackage == "TAM" & !consecutive & (nrow(consInfo) > 1)  & persMethod != "EAP" ) {
+      stop('For true multidimensional analysis using TAM, only EAPs are available. \n\n
+            Change the persMethod argument to "EAP".')
     }
 
     # check for mismatches of function arguments
@@ -144,7 +144,7 @@ areColors <- function(x) {
          is.data.frame(results$persPars) &
          is.data.frame(results$persRaw) &
          is.data.frame(results$persMax) &
-         is.list(results$persFit) &
+         (is.list(results$persFit) | is.null(results$persFit)) &
          is.list(results$estSummary) &
          is.list(results$classicalStats) &
          is.list(results$empties) &

@@ -47,6 +47,11 @@ test_that("craschR produces expected errors", {
                               consecutive = TRUE, writeout = FALSE),
                "Unidimensional analysis cannot be consecutive. Use consecutive=FALSE."
   )
+  expect_error(bad <- craschR(scores = AMYwide, itemInfo = AMYitem,
+                              consInfo = AMYcons, estPackage = "TAM",
+                              retainOrig = TRUE, persMethod = "WLE",
+                              consecutive = FALSE, writeout = FALSE)
+  )
 })
 
 test_that("craschR produces identical results for consecutive analyses run
@@ -105,4 +110,13 @@ test_that("craschR produces identical results for consecutive analyses run
   # skipping tests for empties
   # skipping tests for scoresRecoded
   # skipping tests for all input (varsItem, varsCons, varsInfo, scoresOrig)
+})
+
+test_that("craschR persMethod argument", {
+  test <- craschR(scores = ADPwide, itemInfo = ADPitem, consInfo = ADPcons,
+                  varsInfo = ADPvars, estPackage = "TAM", retainOrig = TRUE,
+                  persMethod = "WLE", consecutive = FALSE, writeout = FALSE)
+  test <- craschR(scores = ADPwide, itemInfo = ADPitem, consInfo = ADPcons,
+                  varsInfo = ADPvars, estPackage = "TAM", retainOrig = TRUE,
+                  persMethod = "MLE", consecutive = FALSE, writeout = FALSE)
 })

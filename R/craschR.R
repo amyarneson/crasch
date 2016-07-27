@@ -293,7 +293,7 @@ craschR <- function(scores, itemInfo = NULL, consInfo = NULL, varsInfo = NULL,
     } else {
       sepRel <- sapply(1:D,function(x) {
       # ( SSD               - MSE                  ) / SSD
-        ( var(persPars[,x]) - sum(persSEs[,x]^2)/N ) / var(persPars[,x])
+        ( var(persEsts$Pars[,x]) - sum(persEsts$SEs[,x]^2)/N ) / var(persEsts$Pars[,x])
         })
     }
     names(sepRel) = consInfo$short.name
@@ -363,7 +363,7 @@ craschR <- function(scores, itemInfo = NULL, consInfo = NULL, varsInfo = NULL,
                 itemSEs = itemEsts$SEs,
                 itemThres = itemEsts$Thres,
                 itemFit = itemFit,
-                persPars = persEsts$Pars,
+                persPars = as.data.frame(persEsts$Pars),
                 persSEs = persEsts$SEs,
                 persRaw = persEsts$Raw,
                 persMax = persEsts$Max,
