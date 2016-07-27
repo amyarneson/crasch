@@ -7,7 +7,7 @@
 craschR(scores, itemInfo = NULL, consInfo = NULL, varsInfo = NULL,
   estPackage = "mirt", retainOrig = FALSE, missingAs0 = FALSE,
   longFormat = FALSE, persMethod = "EAP", consecutive = FALSE,
-  writeout = TRUE, fileSuffix = NULL, ...)
+  writeout = TRUE, fileSuffix = NULL)
 }
 \arguments{
 \item{scores}{A data frame or path to CSV file in crasch format with the
@@ -42,6 +42,8 @@ If \code{FALSE}, missing data will remain as missing data.}
 \item{longFormat}{A logical indicating whether the scores object is in long
 format.  If \code{TRUE}, reshaping to wide format will occur internally.}
 
+\item{persMethod}{Choose from c("EAP", "MLE", "WLE")}
+
 \item{consecutive}{A logical indicating whether to perform a 'consecutive'
 analysis in which an independent analysis is conducted for each dimension.
 If \code{TRUE}, the correlation between any two dimensions will be
@@ -57,10 +59,6 @@ you specify.}
 file name (if \code{writeout = TRUE}). Use this if you are conducting
 multiple analyses in the same working directory and do not wish for your
 existing files to be overwritten.}
-
-\item{...}{Further arguments to be passed to \code{mirt()},
-\code{tam.mml()}, \code{pcm.fit()} or other functions. Besides convergence
-criterion or other control arguments, this is not recommended.}
 }
 \value{
 A list with the following entries

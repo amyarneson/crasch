@@ -9,16 +9,12 @@ AMY <- craschR(scores = AMYwide, itemInfo = AMYitem, consInfo = AMYcons,
                varsInfo = AMYvars, estPackage = "TAM", retainOrig = TRUE,
                consecutive = TRUE, writeout = FALSE)
 
-wm(AMY)
-wm(AMY, byCat = TRUE)
-ICC.graph(AMY)
-CPC.graph(AMY)
-CPC.graph(AMY, observed = TRUE, palette = "PuBu")
-CPC.graph(AMY, palette = "PuBu")
-info.graph(AMY)
-info.graph(AMY, type = "IIC")
-info.graph(AMY, type = "TIC")
-info.graph(AMY, type = "IIC", dim = 1)
-info.graph(AMY, dim = 1, type = "TIC", completeOnly = FALSE)
-info.graph(AMY, dim = 2)
-item.analysis(AMY)
+
+ADP1 <- craschR(scores = ADPwide[,c(1,2,4,7,8,10,12)],
+                itemInfo = ADPitem[c(1,2,4,7,8,10,12),], consInfo = ADPcons,
+                estPackage = "TAM", retainOrig = TRUE, consecutive = FALSE,
+                writeout = FALSE)
+ADP2 <- craschR(scores = ADPwide[,c(3,5,6,9,11,13)],
+                itemInfo = ADPitem[c(3,5,6,9,11,13),], consInfo = ADPcons,
+                estPackage = "TAM", retainOrig = TRUE, consecutive = FALSE,
+                writeout = FALSE)

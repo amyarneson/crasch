@@ -3,16 +3,6 @@
 ####################################################################################################
 # POST-ESTIMATION OUTPUT
 #
-# KIDMAPS
-#   code to find all underfitting respondents (their rows)
-    which(pers.pars$infit > 4/3)
-    which(pers.pars$infit == max(pers.pars$infit))
-#   code to find a particular person ID
-    row.names(pers.pars)[2]
-#   run the KIDMAP, the input is the ROW of the person you want to create it for
-#   You can only make one at a time. Change the input and rerun for others.
-  KIDMAP(2)
-#
 # SPLIT-HALVES RELIABILITY COEFFICIENT
 #   You need to write vectors for item.set1 & item.set2 (there can be no overlap)
 #     For consecutive numbers (1-10,etc.), you can use this syntax:
@@ -31,21 +21,7 @@
 # MEAN ABILITY TRAJECTORIES
 #   You might use this graph for item-level validity.
   mean.traj()
-####################################################################################################
-# CUSTOMIZED OUTPUT
-#
-# Model-based CPC graphs with theta lines, marked with probabilities (no empirical dots)
-#   You can put a single line on the graph with the following syntax:
-#     theta = -1.2)
-#   Or multiple lines by writing a vector
-#     theta = c(-1,1)
-  CPC.graph(theta=c(0),empirical=FALSE,outfile="CPC-th")
-# Note that without specifying a new -outfile- name, your existing CPC graphs will be overwritten
-#
-# SEM graphs with all cases
-#   You may want to see a SEM graph with all cases (especially if you had no complete cases)
-  SEM.graph(complete.only=FALSE)
-#
+
 ####################################################################################################
 # DEMOGRAPHICS, D.I.F., & EXTERNAL CORRELATIONS
 # These analyses are optional and only possible if you have collected demographics on your

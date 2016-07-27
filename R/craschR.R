@@ -24,6 +24,7 @@
 #'   If \code{FALSE}, missing data will remain as missing data.
 #' @param longFormat A logical indicating whether the scores object is in long
 #'   format.  If \code{TRUE}, reshaping to wide format will occur internally.
+#' @param persMethod Choose from c("EAP", "MLE", "WLE")
 #' @param consecutive A logical indicating whether to perform a 'consecutive'
 #'   analysis in which an independent analysis is conducted for each dimension.
 #'   If \code{TRUE}, the correlation between any two dimensions will be
@@ -37,9 +38,6 @@
 #'   file name (if \code{writeout = TRUE}). Use this if you are conducting
 #'   multiple analyses in the same working directory and do not wish for your
 #'   existing files to be overwritten.
-#' @param ... Further arguments to be passed to \code{mirt()},
-#'   \code{tam.mml()}, \code{pcm.fit()} or other functions. Besides convergence
-#'   criterion or other control arguments, this is not recommended.
 #'
 #' @return A list with the following entries
 #'   \item{itemPars}{A matrix with the item parameter estimates.  If
@@ -97,11 +95,9 @@
 #            -- where item parameters come from
 
 craschR <- function(scores, itemInfo = NULL, consInfo = NULL, varsInfo = NULL,
-                    estPackage="mirt", retainOrig = FALSE,
-                    missingAs0 = FALSE, longFormat = FALSE,
-                    persMethod = "EAP", consecutive = FALSE,
-                    writeout = TRUE, fileSuffix = NULL, ...) {
-
+                    estPackage="mirt", retainOrig = FALSE, missingAs0 = FALSE,
+                    longFormat = FALSE, persMethod = "EAP", consecutive = FALSE,
+                    writeout = TRUE, fileSuffix = NULL) {
   # if files are supplied for scores, itemInfo, consInfo, varsInfo:
   if ( is.character(scores) ) {
     if ( !grepl(".csv$",scores) ) {
@@ -332,7 +328,8 @@ craschR <- function(scores, itemInfo = NULL, consInfo = NULL, varsInfo = NULL,
                     numIter = results$iter, numIntPoints = results$nnodes,
                     deviance = results$deviance, AIC = results$ic$AIC,
                     BIC = results$ic$BIC,
-                    missingDataPerc = sum(is.na(wide))/prod(dim(wide))*100)
+                    missingDataPerc = sum(is.na(wide))/prod(dim(wide))*100,
+                    persMethod = persMethod)
 
   if ( writeout ) {
     write.csv(cbind(itemEsts$Pars, itemEsts$SEs, itemEsts$Thres),

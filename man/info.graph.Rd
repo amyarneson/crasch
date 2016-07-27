@@ -2,7 +2,7 @@
 % Please edit documentation in R/personItem.R
 \name{info.graph}
 \alias{info.graph}
-\title{Plots the standard error of measurement or test information fucntion.}
+\title{Plots the standard error of measurement or test information function.}
 \usage{
 info.graph(results, dim = NULL, type = "SEM", completeOnly = TRUE,
   palette = "BASS", thetaGrid = seq(-6, 6, length.out = 100),
@@ -46,6 +46,6 @@ A plot of the specified test information curve.  (Note: if you want
   \code{IRT.informationCurves()} directly.)
 }
 \description{
-Plots the standard error of measurement or test information fucntion.
+Plots the standard error of measurement or test information function.
 }
 
