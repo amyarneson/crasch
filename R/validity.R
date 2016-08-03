@@ -52,3 +52,120 @@ Split.halves <- function(results1, results2) {
   r <- cor(pers1, pers2, method = "pearson", use = "complete.obs")
   as.numeric( (2*r) /(1 + r) )
 }
+
+###############################################################################
+#' Returns and plots the mean location trajectories by category per item.
+#'
+#' @param results The output from a run of \code{craschR}. (link?)
+#' @param itemOrder A numeric vector that specifies which items from the output
+#'   should be graphed.  If \code{NULL}, all items will be graphed.  Note that
+#'   items scored on different dimensions will be graphed separately.
+#' @param palette A character string indicating the color scheme.  Can be
+#'   "BASS", any RColorBrewer palette or a vector containing any number of
+#'    colors.  The colors from each palette will be circulated with each line
+#'    type (lty).  Be careful to specify enough colors for the number of items
+#'    that will appear on each graph.
+#' @param writeout A logical indicating whether the graphic should be written to
+#'   to your working directory as your specified \code{imageType}.  If
+#'   \code{TRUE}, the file name will begin \code{meanTraj}, followed by an index
+#'   for the dimension, and the \code{fileSuffix} if provided.
+#' @param imageType A character string indicating the format for graphics (if
+#'   \code{writeout = TRUE}). Supported types:
+#'   \code{c("pdf","svg","jpeg","bmp","tiff","png")}.
+#' @param fileSuffix A character string that will be affixed to the end of each
+#'   file name (if \code{writeout = TRUE}). Use this if you are conducting
+#'   multiple analyses in the same working directory and do not wish for your
+#'   existing files to be overwritten.
+#'
+#' @return A list containing matrices of the mean location estimates by score
+#'   and their standard deviations.
+#'
+#' @export
+
+mean.traj <- function(results, itemOrder = NULL,
+                      palette = "BASS",
+                      writeout = FALSE, imageType = "pdf", fileSuffix= NULL) {
+  origPar <- par(no.readonly = TRUE) # to reset graphical parameters after
+  checkResults(results)
+  checkWrite(writeout, fileSuffix)
+  checkImageType(imageType)
+  checkItemOrder(itemOrder, results$itemInfo)
+
+  if (is.null(itemOrder)) {
+    itemOrder <- 1:results$estSummary$I
+  }
+
+  itemInfo <- results$itemInfo[itemOrder,]
+  scoresRecoded <- results$scoresRecoded[,itemOrder]
+  D <- which(results$consInfo$cons.ID %in% unique(itemInfo$cons.ID))
+
+  output <- list()
+
+  for (d in D) {
+    inclItems <- itemInfo$cons.ID == results$consInfo$cons.ID[d]
+
+    meanLocs <- matrix(NA, nrow = sum(inclItems),
+                                 ncol = ncol(results$itemPars))
+    row.names(meanLocs) <- itemInfo$item.name[inclItems]
+    colnames(meanLocs) <- paste0("recodedScore", 0:(ncol(meanLocs) - 1))
+    sdLocs <- meanLocs
+
+    j <- 1
+    for (i in which(inclItems)) {
+      meanLocs[j,] <- c(sapply(0:(sum(as.matrix(itemInfo[i, 6:ncol(itemInfo)])) - 1),
+                               function(x) {
+        mean(results$persPars[scoresRecoded[!is.na(scoresRecoded[,i]), i] == x, d],
+             na.rm = TRUE)
+      }), rep(NA, ncol(meanLocs) - sum(as.matrix(itemInfo[i, 6:ncol(itemInfo)]))))
+
+      sdLocs[j,] <- c(sapply(0:(sum(as.matrix(itemInfo[i, 6:ncol(itemInfo)])) - 1),
+                           function(x) {
+        sd(results$persPars[scoresRecoded[!is.na(scoresRecoded[,i]), i] == x, d],
+           na.rm = TRUE)
+      }), rep(NA, ncol(meanLocs) - sum(as.matrix(itemInfo[i, 6:ncol(itemInfo)]))))
+      j = j + 1
+    }
+
+    meanLocsLong <- reshape(data.frame(meanLocs), varying = 1:ncol(meanLocs),
+                            v.names = "X", direction = "long")
+    meanLocsLong = meanLocsLong[complete.cases(meanLocsLong), ]
+    meanLocsLong$score = meanLocsLong$time - 1
+
+    if (writeout) {
+      eval(parse(text = paste0(imageType, "('meanTraj", d, fileSuffix, ".",
+                               imageType, "')")))
+    }
+
+    # figure out colors
+    if (identical(palette, "BASS")) {
+      color <- "#80b1d3"
+    } else if (palette %in% row.names(brewer.pal.info)) {
+      color <- brewer.pal(min(length(inclItems),
+        brewer.pal.info$maxcolors[which(row.names(brewer.pal.info) == palette)]),
+        palette)
+    } else if (all(areColors(palette))) {
+      color <- palette
+    } else {
+      'Invalid palette argument.'
+    }
+
+    interaction.plot(x.factor = meanLocsLong$score,
+                     trace.factor = meanLocsLong$id,
+                     response = meanLocsLong$X,
+                     legend = FALSE, col = color, lty = 1, lwd = 2,
+                     ylab = "Mean Location", xlab = "Numeric Score",
+                     main = "Mean Location Trajectories by Item")
+    mtext(as.character(results$consInfo$short.name[d]))
+
+    if (writeout) {
+      dev.off()
+    }
+
+    output[[which(D == d)]] <- list(meanLocations = meanLocs,
+                                    sdLocations = sdLocs)
+  }
+
+  par(origPar)
+  names(output) <- results$consInfo$short.name[D]
+  return(output)
+}

@@ -1,26 +1,8 @@
 ## 274A annotated sample script for unidimensional analysis
 
-####################################################################################################
-# POST-ESTIMATION OUTPUT
-#
-# SPLIT-HALVES RELIABILITY COEFFICIENT
-#   You need to write vectors for item.set1 & item.set2 (there can be no overlap)
-#     For consecutive numbers (1-10,etc.), you can use this syntax:
-#       1:10
-#     For non-consecutive numbers (3,6,7,10), you must use this syntax:
-#       c(3,6,7,10)
-#     Do not use quotation marks and keep the parentheses as is
-  split.rel = split.halves(item.set1=c(1,2,4,7,8,10,12),
-                           item.set2=c(3,5,6,9,11,13))
-  split.rel
-#
 # SPEARMAN'S RHO
 #   This is only applicable to FULLY DICHOTOMOUS data or EQUIVALENTLY SCORED data
 #   Spearman = Sp.rho(exp.ord=c(1,2,3,4,5),which.step=1)
-#
-# MEAN ABILITY TRAJECTORIES
-#   You might use this graph for item-level validity.
-  mean.traj()
 
 ####################################################################################################
 # DEMOGRAPHICS, D.I.F., & EXTERNAL CORRELATIONS
