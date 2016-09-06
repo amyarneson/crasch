@@ -1,14 +1,4 @@
-####################################################################################################
-# Calculate Spearman's rho
-# which.step = c("avg","high")
-
-Sp.rho <- function(item.thres=thresholds,which.step=1,exp.ord) {
-  #needs to be a matrix,can't choose a step that doesn't exist,only for dichotomous or 'equivalently scored' data
-  stopifnot(is.matrix(item.thres),which.step<=ncol(item.thres),!anyNA(item.thres))
-  cor(exp.ord,as.numeric(rank(item.thres[,which.step])),method="spearman")
-}
-
-####################################################################################################
+################################################################################
 # Complete 'naive' DIF a la 274A
 # 95% comparative CIs follow Goldstein and Healy (1995)
 # data is in wide form

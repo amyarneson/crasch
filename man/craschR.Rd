@@ -5,7 +5,7 @@
 \title{Item and person estimates and fit statistics.}
 \usage{
 craschR(scores, itemInfo = NULL, consInfo = NULL, varsInfo = NULL,
-  estPackage = "mirt", retainOrig = FALSE, missingAs0 = FALSE,
+  estPackage = "TAM", retainOrig = FALSE, missingAs0 = FALSE,
   longFormat = FALSE, persMethod = "EAP", consecutive = FALSE,
   writeout = TRUE, fileSuffix = NULL)
 }

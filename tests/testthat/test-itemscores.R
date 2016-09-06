@@ -1,6 +1,18 @@
 library(crasch)
 context("item.scores")
 
+SUP <- craschR(scores = SUPwide, itemInfo = SUPitem, consInfo = SUPcons,
+               varsInfo = SUPvars, estPackage = "TAM", retainOrig = TRUE,
+               consecutive = FALSE, writeout = FALSE)
+ADP <- craschR(scores = ADPwide, itemInfo = ADPitem, consInfo = ADPcons,
+               varsInfo = ADPvars, estPackage = "TAM", retainOrig = TRUE,
+               consecutive = FALSE, writeout = FALSE)
+AMY <- craschR(scores = AMYwide, itemInfo = AMYitem, consInfo = AMYcons,
+               varsInfo = AMYvars, estPackage = "TAM", retainOrig = TRUE,
+               consecutive = TRUE, writeout = FALSE)
+DI <- craschR(scores = DIwide, itemInfor = DIitem, consInfo = DIcons,
+              estPackage = "TAM", retainOrig = TRUE, writeout = FALSE)
+
 test_that("item.scores produces correct frequencies/proportions", {
   expect_equal(matrix(item.scores(SUP)$SUP$counts, nrow = 15, ncol = 5),
                matrix(c(1, NA,  3, 17, 17,

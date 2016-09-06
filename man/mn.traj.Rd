@@ -16,9 +16,7 @@ items scored on different dimensions will be graphed separately.}
 
 \item{palette}{A character string indicating the color scheme.  Can be
 "BASS", any RColorBrewer palette or a vector containing any number of
- colors.  The colors from each palette will be circulated with each line
- type (lty).  Be careful to specify enough colors for the number of items
- that will appear on each graph.}
+ colors.  The colors from each palette will be circulated through items.}
 
 \item{writeout}{A logical indicating whether the graphic should be written to
 to your working directory as your specified \code{imageType}.  If

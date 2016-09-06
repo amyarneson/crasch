@@ -1,6 +1,18 @@
 library(crasch)
 context("item.analysis")
 
+SUP <- craschR(scores = SUPwide, itemInfo = SUPitem, consInfo = SUPcons,
+               varsInfo = SUPvars, estPackage = "TAM", retainOrig = TRUE,
+               consecutive = FALSE, writeout = FALSE)
+ADP <- craschR(scores = ADPwide, itemInfo = ADPitem, consInfo = ADPcons,
+               varsInfo = ADPvars, estPackage = "TAM", retainOrig = TRUE,
+               consecutive = FALSE, writeout = FALSE)
+AMY <- craschR(scores = AMYwide, itemInfo = AMYitem, consInfo = AMYcons,
+               varsInfo = AMYvars, estPackage = "TAM", retainOrig = TRUE,
+               consecutive = TRUE, writeout = FALSE)
+DI <- craschR(scores = DIwide, itemInfor = DIitem, consInfo = DIcons,
+              estPackage = "TAM", retainOrig = TRUE, writeout = FALSE)
+
 test_that("item.analysis calculates correct output", {
   # table 1 - overall items
     # counts of non-missing (Count) and missing responses (Missing)

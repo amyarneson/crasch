@@ -176,7 +176,7 @@ mn.traj <- function(results, itemOrder = NULL,
 
 
 ###############################################################################
-#' Calculates Spearman's rho for fully dichotomous data.
+#' Calculates Spearman's rho for fully dichotomous, unidimensional data.
 #'
 #' @param results The output from a run of \code{craschR}. (link?)
 #' @param whichStep An integer indicating which step you want to compare (only
@@ -189,14 +189,26 @@ mn.traj <- function(results, itemOrder = NULL,
 #'
 #' @export
 
-Sp.rho <- function(results, whichStep = 1, expOrd) {
+Sp.rho <- function(results, whichStep = 1, expOrder) {
+  checkResults(results)
+
+  if (!all.equal(sort(expOrder), 1:results$estSummary$I)) {
+    stop('Invalid expOrd argument.')
+  }
+
   itemThres <- results$itemThres
+
+  if (!(whichStep %in% 1:(ncol(itemThres)))) {
+    stop('Invalid whichStep argument.')
+  }
+
   # needs to be a matrix
   # can't choose a step that doesn't exist
   # only for dichotomous or 'equivalently scored' data
-  if (is.matrix(itemThres) | whichStep <= ncol(itemThres) | !anyNA(itemThres)) {
+  if (!(is.matrix(itemThres) | whichStep <= ncol(itemThres) |
+        !anyNA(itemThres) | nrow(results$consInfo) == 1)) {
     stop('You cannot compute Spearmans Rho with your data.')
   }
 
-  cor(expOrd, as.numeric(rank(itemThres[,whichStep])), method = "spearman")
+  cor(expOrder, as.numeric(rank(itemThres[,whichStep])), method = "spearman")
 }

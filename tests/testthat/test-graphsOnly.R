@@ -1,6 +1,18 @@
 library(crasch)
 context("pers.hist, KIDMAP, infit.MNSQ, ICC.graph, CPC.graph, info.graph, wm")
 
+SUP <- craschR(scores = SUPwide, itemInfo = SUPitem, consInfo = SUPcons,
+               varsInfo = SUPvars, estPackage = "TAM", retainOrig = TRUE,
+               consecutive = FALSE, writeout = FALSE)
+ADP <- craschR(scores = ADPwide, itemInfo = ADPitem, consInfo = ADPcons,
+               varsInfo = ADPvars, estPackage = "TAM", retainOrig = TRUE,
+               consecutive = FALSE, writeout = FALSE)
+AMY <- craschR(scores = AMYwide, itemInfo = AMYitem, consInfo = AMYcons,
+               varsInfo = AMYvars, estPackage = "TAM", retainOrig = TRUE,
+               consecutive = TRUE, writeout = FALSE)
+DI <- craschR(scores = DIwide, itemInfor = DIitem, consInfo = DIcons,
+              estPackage = "TAM", retainOrig = TRUE, writeout = FALSE)
+
 test_that("pers.hist produces expected errors", {
   # invalid dimension specified
   expect_error(pers.hist(SUP, dim = 2))
