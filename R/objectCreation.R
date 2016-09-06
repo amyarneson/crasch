@@ -113,9 +113,9 @@ TAM.items <- function(TAMresults, itemInfo) {
 
     # for dichotomous data:
   } else if ( maxK == 2 ) {
-    itemPars <- TAMresults$xsi[,1]
+    itemPars <- as.matrix(TAMresults$xsi[,1])
     colnames(itemPars) = c("d")
-    itemSEs <- TAMresults$xsi[,2]
+    itemSEs <- as.matrix(TAMresults$xsi[,2])
     colnames(itemSEs) = c("SE_d")
 
     itemThres <- matrix(WrightMap::make.thresholds(itemPars[,1]),nrow=I,ncol=1)

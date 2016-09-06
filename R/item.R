@@ -93,7 +93,7 @@ item.analysis <- function(results, writeout = FALSE, fileSuffix= NULL) {
 
       start = start + K_i
     }
-  } else if (ncol(results$itemThres == 1)) {
+  } else if (ncol(results$itemThres) == 1) {
     # create the byStep table (for dichotomous items)
     K_total = 2 * results$estSummary$I
     byStep = data.frame(Item = vector(mode = "character", length = K_total),
@@ -111,6 +111,7 @@ item.analysis <- function(results, writeout = FALSE, fileSuffix= NULL) {
 
     for(i in 1:results$estSummary$I) {
       fill = c(2*i - 1, 2*i)
+      cons = which(results$consInfo$cons.ID == results$itemInfo$cons.ID[i]) # row index
       # item and category names
       byStep$Item[fill] = rep(results$itemInfo$item.name[i], 2)
       byStep$Construct[fill] = rep(results$consInfo$short.name[cons], 2)

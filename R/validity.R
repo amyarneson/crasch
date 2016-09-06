@@ -62,9 +62,7 @@ Split.halves <- function(results1, results2) {
 #'   items scored on different dimensions will be graphed separately.
 #' @param palette A character string indicating the color scheme.  Can be
 #'   "BASS", any RColorBrewer palette or a vector containing any number of
-#'    colors.  The colors from each palette will be circulated with each line
-#'    type (lty).  Be careful to specify enough colors for the number of items
-#'    that will appear on each graph.
+#'    colors.  The colors from each palette will be circulated through items.
 #' @param writeout A logical indicating whether the graphic should be written to
 #'   to your working directory as your specified \code{imageType}.  If
 #'   \code{TRUE}, the file name will begin \code{meanTraj}, followed by an index
@@ -82,9 +80,9 @@ Split.halves <- function(results1, results2) {
 #'
 #' @export
 
-mean.traj <- function(results, itemOrder = NULL,
-                      palette = "BASS",
-                      writeout = FALSE, imageType = "pdf", fileSuffix= NULL) {
+mn.traj <- function(results, itemOrder = NULL,
+                    palette = "BASS",
+                    writeout = FALSE, imageType = "pdf", fileSuffix= NULL) {
   origPar <- par(no.readonly = TRUE) # to reset graphical parameters after
   checkResults(results)
   checkWrite(writeout, fileSuffix)
@@ -137,16 +135,22 @@ mean.traj <- function(results, itemOrder = NULL,
     }
 
     # figure out colors
-    if (identical(palette, "BASS")) {
-      color <- "#80b1d3"
-    } else if (palette %in% row.names(brewer.pal.info)) {
-      color <- brewer.pal(min(length(inclItems),
-        brewer.pal.info$maxcolors[which(row.names(brewer.pal.info) == palette)]),
-        palette)
+    if (length(palette) == 1) {
+      if (identical(palette, "BASS")) {
+        color <- "#80b1d3"
+      } else if (palette %in% row.names(brewer.pal.info)) {
+        color <- brewer.pal(min(length(inclItems),
+          brewer.pal.info$maxcolors[which(row.names(brewer.pal.info) == palette)]),
+          palette)
+      } else if (all(areColors(palette))) {
+        color <- palette
+      } else {
+      stop('Invalid palette argument.')
+      }
     } else if (all(areColors(palette))) {
-      color <- palette
+        color <- palette
     } else {
-      'Invalid palette argument.'
+      stop('Invalid palette argument.')
     }
 
     interaction.plot(x.factor = meanLocsLong$score,
@@ -168,4 +172,31 @@ mean.traj <- function(results, itemOrder = NULL,
   par(origPar)
   names(output) <- results$consInfo$short.name[D]
   return(output)
+}
+
+
+###############################################################################
+#' Calculates Spearman's rho for fully dichotomous data.
+#'
+#' @param results The output from a run of \code{craschR}. (link?)
+#' @param whichStep An integer indicating which step you want to compare (only
+#'   applicable if you have 'equivalently scored' polytomous items meaning that
+#'   all items are scored into the same levels and all scores are present in
+#'   your data).
+#' @param expOrder A vector with the expected ordering of the items.
+#'
+#' @return The split-halves reliability coefficient.
+#'
+#' @export
+
+Sp.rho <- function(results, whichStep = 1, expOrd) {
+  itemThres <- results$itemThres
+  # needs to be a matrix
+  # can't choose a step that doesn't exist
+  # only for dichotomous or 'equivalently scored' data
+  if (is.matrix(itemThres) | whichStep <= ncol(itemThres) | !anyNA(itemThres)) {
+    stop('You cannot compute Spearmans Rho with your data.')
+  }
+
+  cor(expOrd, as.numeric(rank(itemThres[,whichStep])), method = "spearman")
 }

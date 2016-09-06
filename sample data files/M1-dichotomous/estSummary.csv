@@ -1,0 +1,16 @@
+"","V1"
+"estPackage",TAM
+"consecutive",FALSE
+"IRTmodel",Rasch
+"startTime",Mon Sep 05 17:28:00 2016
+"endTime",Mon Sep 05 17:28:00 2016
+"N",146
+"I",14
+"D",1
+"numIter",34
+"numIntPoints",21
+"deviance",1970.06475637571
+"AIC",2000.06475637571
+"BIC",2044.81885570133
+"missingDataPerc",0
+"persMethod",EAP

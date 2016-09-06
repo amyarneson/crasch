@@ -98,7 +98,6 @@ craschR <- function(scores, itemInfo = NULL, consInfo = NULL, varsInfo = NULL,
                     estPackage="mirt", retainOrig = FALSE, missingAs0 = FALSE,
                     longFormat = FALSE, persMethod = "EAP", consecutive = FALSE,
                     writeout = TRUE, fileSuffix = NULL) {
-  # if files are supplied for scores, itemInfo, consInfo, varsInfo:
   if ( is.character(scores) ) {
     if ( !grepl(".csv$",scores) ) {
       stop("scores file must end with '.csv'")
