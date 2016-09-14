@@ -10,7 +10,7 @@ ADP <- craschR(scores = ADPwide, itemInfo = ADPitem, consInfo = ADPcons,
 AMY <- craschR(scores = AMYwide, itemInfo = AMYitem, consInfo = AMYcons,
                varsInfo = AMYvars, estPackage = "TAM", retainOrig = TRUE,
                consecutive = TRUE, writeout = FALSE)
-DI <- craschR(scores = DIwide, itemInfor = DIitem, consInfo = DIcons,
+DI <- craschR(scores = DIwide, itemInfo = DIitem, consInfo = DIcons,
               estPackage = "TAM", retainOrig = TRUE, writeout = FALSE)
 
 test_that("item.scores produces correct frequencies/proportions", {

@@ -307,7 +307,7 @@ craschR <- function(scores, itemInfo = NULL, consInfo = NULL, varsInfo = NULL,
     }
 
   # sirt estimation
-  } else if ( estPackage == "sirt" ) {
+  } else if ( estPackage == "mirt" ) {
 
   }
 
@@ -350,9 +350,13 @@ craschR <- function(scores, itemInfo = NULL, consInfo = NULL, varsInfo = NULL,
                                           function(x) {
                                             length(x) <- rowMax
                                             x })))
-        empties0 = reshape(empties0, direction = "long",
-                           varying = 4:ncol(empties0), idvar = "item.ID")
-        empties0 = empties0[complete.cases(empties0),-4]
+        if (ncol(empties0) > 4) {
+          empties0 = reshape(empties0, direction = "long",
+                             varying = 4:ncol(empties0), idvar = "item.ID")
+          empties0 = empties0[complete.cases(empties0),-4]
+        } else {
+          empties0 = empties0[complete.cases(empties0),]
+        }
         write.csv(empties0, paste0("empties", fileSuffix, ".csv"),
                   row.names = FALSE)
       }
