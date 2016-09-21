@@ -355,7 +355,12 @@ CPC.graph <- function(results, itemOrder = NULL, palette = "BASS",
     itemThres <- results$itemThres
   } else if (is.numeric(itemOrder)) {
     itemInfo <- results$itemInfo[itemOrder,]
-    itemThres <- results$itemThres[itemOrder,]
+    if (length(itemOrder == 1)) {
+      itemThres <- matrix(results$itemThres[itemOrder,], nrow = 1,
+                          dimnames = list(NULL, colnames(itemThres)))
+    } else {
+      itemThres <- results$itemThres[itemOrder,]
+    }
   } else {
     stop('itemOrder must be a numeric vector or NULL.')
   }
@@ -513,7 +518,12 @@ ICC.graph <- function(results, itemOrder = NULL, palette = "BASS",
     itemThres <- results$itemThres
   } else if (is.numeric(itemOrder)) {
     itemInfo <- results$itemInfo[itemOrder,]
-    itemThres <- results$itemThres[itemOrder,]
+    if (length(itemOrder == 1)) {
+      itemThres <- matrix(results$itemThres[itemOrder,], nrow = 1,
+                          dimnames = list(NULL, colnames(itemThres)))
+    } else {
+      itemThres <- results$itemThres[itemOrder,]
+    }
   } else {
     stop('Invalid itemOrder argument.')
   }

@@ -94,7 +94,13 @@ mn.traj <- function(results, itemOrder = NULL,
   }
 
   itemInfo <- results$itemInfo[itemOrder,]
-  scoresRecoded <- results$scoresRecoded[,itemOrder]
+  if (length(itemOrder == 1)) {
+    scoresRecoded <- data.frame(results$scoresRecoded[,itemOrder])
+    row.names(scoresRecoded) = row.names(results$scoresRecoded)
+    colnames(scoresRecoded) = colnames(results$scoresRecoded)[itemOrder]
+  } else {
+    scoresRecoded <- results$scoresRecoded[,itemOrder]
+  }
   D <- which(results$consInfo$cons.ID %in% unique(itemInfo$cons.ID))
 
   output <- list()
