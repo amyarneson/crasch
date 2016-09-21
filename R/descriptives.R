@@ -124,13 +124,23 @@ item.scores <- function(results, dim = NULL, freqs = TRUE, palette = "BASS",
 
       eval(parse(text=paste0(imageType, "('", graphout, "')")))
     }
-    # plot tograph + extra empty row @ top so there is room for legend!
-    barplot(cbind(tograph[,seq(ncol(tograph), 1, -1)], rep(NA, nrow(tograph))),
+
+    layout(matrix(1:2, nrow = 2), heights = c(5, 1))
+    par(xpd = TRUE)
+
+    par(mar = c(2, 4, 4, 2) + 0.1)
+    barplot(cbind(tograph[,seq(ncol(tograph), 1, -1)]),
             col = color, horiz = TRUE, las = 1,
             main = paste0(cons$short.name,", Scores by Item"))
-    legend(x = "top", legend = row.names(tograph), pch = 22,
+    par(mar = c(2,0,0,0))
+    plot(1, type = "n", axes = FALSE, xlab = "", ylab = "", xlim = c(-10, 10),
+         ylim = c(-10, 10))
+    legend(x = "center", xjust = .5, legend = row.names(tograph), pch = 22,
            col = "black", pt.bg = color, horiz = TRUE, pt.cex = 2, bty = "n",
-           text.width = max(colSums(tograph))/(nrow(tograph)+2))
+           text.width = 10/nrow(tograph))
+    # text.width uses 10 because the plot I created is 20 wide & must account
+    #   for size of boxes. Hopefully this will work for a reasonable number
+    #   of levels.
 
     if (writeout) {
       dev.off()
