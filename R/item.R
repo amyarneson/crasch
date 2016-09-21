@@ -349,6 +349,7 @@ CPC.graph <- function(results, itemOrder = NULL, palette = "BASS",
   }
 
   origPar = par(no.readonly = TRUE) # to reset graphical parameters after
+  par(xpd = FALSE)
 
   if (is.null(itemOrder)) {
     itemInfo <- results$itemInfo
@@ -419,15 +420,15 @@ CPC.graph <- function(results, itemOrder = NULL, palette = "BASS",
         # group thetas at nearest .5 value for simplicity & to deal with sparse cells
         theta <- round(results$persPars[,which(results$consInfo$cons.ID ==
                                                  itemInfo$cons.ID[i])]/.5) * .5
-        empPts = t(apply(prop.table(table(theta, results$scoresRecoded[,i]),
+        empPts = t(apply(prop.table(table(theta, results$scoresRecoded[,which(results$itemInfo$item.ID == itemInfo$item.ID[i])]),
                                     margin = 1), 1,
                          function(x) {
                            cumsum(rev(x))
-                         }))[,seq((K_i+1), 1, by = -1)]
-        cellCts = t(apply(table(theta, results$scoresRecoded[,i]), 1,
+                         }))[,seq((K_i + 1), 1, by = -1)]
+        cellCts = t(apply(table(theta, results$scoresRecoded[,which(results$itemInfo$item.ID == itemInfo$item.ID[i])]), 1,
                           function(x) {
                             cumsum(rev(x))
-                          }))[,seq((K_i+1), 1, by = -1)]
+                          }))[,seq((K_i + 1), 1, by = -1)]
       } else {
         linecol = "black"
         vlinecol = "grey"
@@ -576,8 +577,8 @@ ICC.graph <- function(results, itemOrder = NULL, palette = "BASS",
 
       cats <- as.logical(itemInfo[i, 6:ncol(itemInfo)])
       # deal with empty categories
-      if (length(results$empties[[i]]) > 0) {
-        cats[results$empties[[i]]] = FALSE
+      if (length(results$empties[[which(results$itemInfo$item.ID == itemInfo$item.ID[i])]]) > 0) {
+        cats[results$empties[[which(results$itemInfo$item.ID == itemInfo$item.ID[i])]]] = FALSE
       }
 
       par(xpd = TRUE)
