@@ -357,7 +357,7 @@ CPC.graph <- function(results, itemOrder = NULL, palette = "BASS",
     itemInfo <- results$itemInfo[itemOrder,]
     if (length(itemOrder == 1)) {
       itemThres <- matrix(results$itemThres[itemOrder,], nrow = 1,
-                          dimnames = list(NULL, colnames(itemThres)))
+                          dimnames = list(NULL, colnames(results$itemThres)))
     } else {
       itemThres <- results$itemThres[itemOrder,]
     }
@@ -520,7 +520,7 @@ ICC.graph <- function(results, itemOrder = NULL, palette = "BASS",
     itemInfo <- results$itemInfo[itemOrder,]
     if (length(itemOrder == 1)) {
       itemThres <- matrix(results$itemThres[itemOrder,], nrow = 1,
-                          dimnames = list(NULL, colnames(itemThres)))
+                          dimnames = list(NULL, colnames(results$itemThres)))
     } else {
       itemThres <- results$itemThres[itemOrder,]
     }
