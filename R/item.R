@@ -355,7 +355,7 @@ CPC.graph <- function(results, itemOrder = NULL, palette = "BASS",
     itemThres <- results$itemThres
   } else if (is.numeric(itemOrder)) {
     itemInfo <- results$itemInfo[itemOrder,]
-    if (length(itemOrder == 1)) {
+    if (length(itemOrder) == 1) {
       itemThres <- matrix(results$itemThres[itemOrder,], nrow = 1,
                           dimnames = list(NULL, colnames(results$itemThres)))
     } else {
@@ -518,12 +518,14 @@ ICC.graph <- function(results, itemOrder = NULL, palette = "BASS",
     itemThres <- results$itemThres
   } else if (is.numeric(itemOrder)) {
     itemInfo <- results$itemInfo[itemOrder,]
-    if (length(itemOrder == 1)) {
+
+    if (length(itemOrder) == 1) {
       itemThres <- matrix(results$itemThres[itemOrder,], nrow = 1,
                           dimnames = list(NULL, colnames(results$itemThres)))
     } else {
       itemThres <- results$itemThres[itemOrder,]
     }
+
   } else {
     stop('Invalid itemOrder argument.')
   }
