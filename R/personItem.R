@@ -345,10 +345,22 @@ wm <- function(results, dim = NULL, byCat = FALSE, palette = "BASS",
     if (writeout) {
       if (!byCat) {
         fileName <- "-itemorder"
-        imgWidth <- min(14, length(thresList[[i]]))
+        if (imageType == "pdf" | imageType == "svg") {
+          imgWidth <- min(14, length(thresList[[i]]))
+          imgHeight <- 7
+        } else {
+          imgWidth <- min(480 * 2, 480/7 * length(thresList[[i]]))
+          imgHeight <- 480
+        }
       } else {
         fileName <- "-constructorder"
-        imgWidth <- max(6, 2*(ncol(results$consInfo) - 5))
+        if (imageType == "pdf" | imageType == "svg") {
+          imgWidth <- max(6, 2*(ncol(results$consInfo) - 5))
+          imgHeight <- 7
+        } else {
+          imgWidth <- max(6 * 480 / 7, 2 * 480 / 7 *(ncol(results$consInfo) - 5))
+          imgHeight <- 480
+        }
       }
 
       if (length(thresList)==1) {
@@ -359,7 +371,7 @@ wm <- function(results, dim = NULL, byCat = FALSE, palette = "BASS",
 
       eval(parse(text = paste0(imageType, "('WM", fileName, index, fileSuffix,
                                ".", imageType, "', width = ", imgWidth,
-                               " , height = 7)")))
+                               " , height = ", imgHeight, ")")))
     }
 
     wrightMap(thetas = thetas,
