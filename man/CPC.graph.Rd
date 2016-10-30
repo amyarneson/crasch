@@ -5,7 +5,7 @@
 \title{Plots the cumulative probability curves from \code{craschR} output.}
 \usage{
 CPC.graph(results, itemOrder = NULL, palette = "BASS", observed = FALSE,
-  minCell = 8, focusTheta = c(-2, 0, 2), writeout = FALSE,
+  minCell = 8, focusTheta = NULL, logitAxis = "x", writeout = FALSE,
   imageType = "pdf", fileSuffix = NULL)
 }
 \arguments{
@@ -26,6 +26,10 @@ an observed proportion.  Only applies if \code{observed=TRUE}.}
 \item{focusTheta}{A numeric vector indicating at which logit values to plot
 a vertical line and print the probabilities for each category.  Only
 applies if \code{observed=FALSE}.}
+
+\item{logitAxis}{A character indicating if the logits should be graphed on
+the x-axis (traditional) or y-axis (as in Wilson, 2005).  Choose from
+c("x", "y").}
 
 \item{writeout}{A logical indicating whether the graphic should be written to
 to your working directory as your specified \code{imageType}.  If
