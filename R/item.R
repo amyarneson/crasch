@@ -311,6 +311,9 @@ infit.MNSQ <- function(results, itemOrder = NULL, params = "items",
 #' @param focusTheta A numeric vector indicating at which logit values to plot
 #'   a vertical line and print the probabilities for each category.  Only
 #'   applies if \code{observed=FALSE}.
+#' @param logitAxis A character indicating if the logits should be graphed on
+#'   the x-axis (traditional) or y-axis (as in Wilson, 2005).  Choose from
+#'   c("x", "y").
 #' @param writeout A logical indicating whether the graphic should be written to
 #'   to your working directory as your specified \code{imageType}.  If
 #'   \code{TRUE}, the file name will begin \code{CPC}, an index, and the
@@ -328,20 +331,36 @@ infit.MNSQ <- function(results, itemOrder = NULL, params = "items",
 #' @export
 
 CPC.graph <- function(results, itemOrder = NULL, palette = "BASS",
-                      observed = FALSE, minCell = 8, focusTheta = c(-2,0,2),
+                      observed = FALSE, minCell = 8, focusTheta = NULL,
+                      logitAxis = "x",
                       writeout = FALSE, imageType = "pdf", fileSuffix = NULL) {
   checkResults(results)
   checkWrite(writeout, fileSuffix)
   checkImageType(imageType)
   checkItemOrder(itemOrder, results$itemInfo)
+
   if (!is.logical(observed)) {
     stop('Invalid observed argument.')
   }
+
   if (!(is.numeric(minCell) & (minCell > 0) & (minCell %% 1 == 0))) {
     stop('Invalid minCell argument.')
   }
-  if (!is.numeric(focusTheta)) {
+
+  if (!is.numeric(focusTheta) & !is.null(focusTheta)) {
     stop('Invalid focusTheta argument.')
+  }
+
+  if (length(logitAxis) != 1) {
+    stop('Invalid logitAxis argument.')
+  } else {
+    if (logitAxis == "x") {
+      logitX = TRUE
+    } else if (logitAxis == "y") {
+      logitX = FALSE
+    } else {
+      stop('Invalid logitAxis argument.')
+    }
   }
 
   if (minCell < 10 & observed) {
@@ -405,14 +424,30 @@ CPC.graph <- function(results, itemOrder = NULL, palette = "BASS",
 
     layout(matrix(1))
     par(mai = c(1.36, 1.093333, 1.093333, 0.56), mar = c(5.1, 4.1, 4.1, 2.1))
-    plot(1, type = "n", xlim = c(-6, 6), ylim = c(0, 1), axes = FALSE,
-         xlab = "Logits", ylab = "Probability",
-         main = "Cumulative Category Probability Curves")
+
+    if (logitX) {
+      xlim = c(-6, 6)
+      ylim = c(0, 1)
+      xlab = "Logits"
+      ylab = "Probability"
+      logits = 1
+      probability = 2
+    } else {
+      ylim = c(-6, 6)
+      xlim = c(0, 1)
+      ylab = "Logits"
+      xlab = "Probability"
+      logits = 2
+      probability = 1
+    }
+
+    plot(1, type = "n", xlim = xlim, ylim = ylim, xlab = xlab, ylab = ylab,
+         axes = FALSE, main = "Cumulative Category Probability Curves")
     mtext(as.character(itemInfo$item.name[i]))
-    axis(1, at = seq(-6, 6, 2))
-    axis(1, at = seq(-5, 5, 2), labels = FALSE)
-    axis(2, at = seq(0, 1, .2), las = 1)
-    axis(2, at = seq(.1, .9, .2), labels = FALSE)
+    axis(logits, at = seq(-6, 6, 2))
+    axis(logits, at = seq(-5, 5, 2), labels = FALSE)
+    axis(probability, at = seq(0, 1, .2), las = 1)
+    axis(probability, at = seq(.1, .9, .2), labels = FALSE)
 
     for (k in 1:K_i) {
       if (observed) {
@@ -435,38 +470,58 @@ CPC.graph <- function(results, itemOrder = NULL, palette = "BASS",
         x <- c(seq(from = -6, to = 6, length.out = 500))
         y1 <- c(boot::inv.logit(x - thres[k]))
         y2 <- c(boot::inv.logit(x - thres[k+1]))
-        polygon(c(x, rev(x)), c(y1, rev(y2)), col = color[k], border = NA)
-      }
-      curve(boot::inv.logit(x - thres[k]), from = -6, to = 6, add = TRUE,
-            col = linecol, lwd = 2)
-      if (observed) {
-        points(sort(unique(theta))[cellCts[,(k+1)] >= minCell],
-               empPts[cellCts[,(k+1)] >= minCell,(k+1)], col = color[k],
-               pch = 20)
-      } else {
-        abline(v = focusTheta, col = vlinecol, lty = 2, lwd = 2)
-        for (a in 1:length(focusTheta)) {
-          bounds <- boot::inv.logit(focusTheta[a] - thres)
-          L <- placement <- rep(NA, length(bounds) + 1)
-          for (k in 0:K_i) {
-            if (k == 0) {
-              upBd = 1
-            } else {
-              upBd = bounds[k]
-            }
-            if (k == K_i) {
-              loBd = 0
-            } else {
-              loBd = bounds[k+1]
-            }
-            L[k+1] = paste0("p(",k,")=", round(upBd - loBd, 2))
-            placement[k+1] = mean(c(upBd, loBd))
-          }
-          points(x = rep(focusTheta[a], length(bounds)), y = bounds, pch=21,
-                 bg = fillcol)
-          text(x = rep(focusTheta[a], length(bounds) + 1), y = placement,
-               labels = L, pos = 4, cex = .5)
+        if (logitX) {
+          polygon(c(x, rev(x)), c(y1, rev(y2)), col = color[k], border = NA)
+        } else {
+          polygon(c(y1, rev(y2)), c(x, rev(x)), col = color[k], border = NA)
         }
+      }
+
+      if (logitX) {
+        curve(boot::inv.logit(x - thres[k]), from = -6, to = 6, add = TRUE,
+              col = linecol, lwd = 2)
+      } else {
+        curve(log(x / (1 - x)) + thres[k], from = 0, to = 1, add = TRUE,
+              col = linecol, lwd = 2)
+      }
+
+      if (observed) {
+        x = sort(unique(theta))[cellCts[, (k+1)] >= minCell]
+        y = empPts[cellCts[, (k+1)] >= minCell, (k+1)]
+        if (logitX) {
+          points(x, y, col = color[k], pch = 20)
+          lines(x, y, col = color[k], lwd = 2, lty = 2)
+        } else {
+          points(y, x, col = color[k], pch = 20)
+          lines(y, x, col = color[k], lwd = 2, lty = 2)
+        }
+      }
+    }
+
+    if (!observed & !is.null(focusTheta) & logitX) {
+      abline(v = focusTheta, col = vlinecol, lty = 2, lwd = 2)
+
+      for (a in 1:length(focusTheta)) {
+        bounds <- boot::inv.logit(focusTheta[a] - thres)
+        L <- placement <- rep(NA, length(bounds) + 1)
+        for (k in 0:K_i) {
+          if (k == 0) {
+            upBd = 1
+          } else {
+            upBd = bounds[k]
+          }
+          if (k == K_i) {
+            loBd = 0
+          } else {
+            loBd = bounds[k+1]
+          }
+          L[k+1] = paste0("p(", k, ")=", round(upBd - loBd, 2))
+          placement[k+1] = mean(c(upBd, loBd))
+        }
+
+        points(rep(focusTheta[a], length(bounds)), bounds, pch=21, bg = fillcol)
+        text(rep(focusTheta[a], length(bounds) + 1), placement, labels = L,
+             pos = 4, cex = .5)
       }
     }
 
