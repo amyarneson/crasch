@@ -138,8 +138,7 @@ KIDMAP <- function(results, personID, dim = NULL, probBounds = c(.25, .75),
   checkWrite(writeout, fileSuffix)
   checkImageType(imageType)
   checkDim(dim, results$consInfo)
-  if (!(as.character(personID) %in% row.names(results$scoresOrig) &
-       length(personID) == 1 &
+  if (!(all(as.character(personID) %in% row.names(results$scoresOrig)) &
        (is.character(personID) | is.numeric(personID)))) {
     stop('Invalid personID argument.')
   }
@@ -178,91 +177,94 @@ KIDMAP <- function(results, personID, dim = NULL, probBounds = c(.25, .75),
     stop('Invalid palette argument.')
   }
 
-  rowIndex <- which(row.names(results$scoresRecoded) == as.character(personID))
-  respVector <- as.numeric(results$scoresRecoded[rowIndex,])
+  rowIndex <- which(row.names(results$scoresRecoded) %in% as.character(personID))
 
   for (d in D) {
     inclItem <- which(results$itemInfo$cons.ID == results$consInfo$cons.ID[d])
     thres <- results$itemThres[inclItem,]
-    toPlot <- data.frame(x = rep(1, prod(dim(thres))),
-                         thres = c(t(thres)),
-                         step = rep(1:ncol(thres), length(inclItem)),
-                         score = rep(respVector[inclItem], each = ncol(thres)) )
-    row.names(toPlot) <- paste(rep(row.names(thres), each = ncol(thres)),
+
+    for (i in rowIndex) {
+      respVector <- as.numeric(results$scoresRecoded[i,])
+      toPlot <- data.frame(x = rep(1, prod(dim(thres))),
+                           thres = c(t(thres)),
+                           step = rep(1:ncol(thres), length(inclItem)),
+                           score = rep(respVector[inclItem], each = ncol(thres)) )
+      row.names(toPlot) <- paste(rep(row.names(thres), each = ncol(thres)),
                                rep(1:ncol(thres), length(inclItem)), sep = "_")
-    toPlot = toPlot[complete.cases(toPlot),] # removes steps that don't exist
-                                             # AND skipped items
-    toPlot$x[toPlot$step <= toPlot$score] = -1
-      # all "reached" thresholds have an x-coord of -1, all others 1
+      toPlot = toPlot[complete.cases(toPlot),] # removes steps that don't exist
+                                               # AND skipped items
+      toPlot$x[toPlot$step <= toPlot$score] = -1
+        # all "reached" thresholds have an x-coord of -1, all others 1
 
-    # location of "surprise" lines
-      upBd = results$persPars[rowIndex, d] - log(probBounds[1] / (1 - probBounds[1]))
-      loBd = results$persPars[rowIndex, d] - log(probBounds[2] / (1 - probBounds[2]))
+      # location of "surprise" lines
+        upBd = results$persPars[i, d] - log(probBounds[1] / (1 - probBounds[1]))
+        loBd = results$persPars[i, d] - log(probBounds[2] / (1 - probBounds[2]))
 
-    if (writeout) {
-      eval(parse(text = paste0(imageType, "('KIDMAP-", d,
-                               as.character(personID), fileSuffix, ".",
-                               imageType, "')")))
-    }
+      if (writeout) {
+        eval(parse(text = paste0(imageType, "('KIDMAP-", i, "_",
+                                 results$consInfo$short.name[d], fileSuffix,
+                                 ".", imageType, "')")))
+      }
 
-    layout(matrix(1,nrow=1))
-    par(mai = c(1.02, 0.82, 0.82, 0.42), mar = c(5.1,4.1,5.3,2.1))
+      layout(matrix(1,  nrow = 1))
+      par(mai = c(1.02, 0.82, 0.82, 0.42), mar = c(5.1, 4.1, 5.3, 2.1))
 
-    plot(1, type = "n", xlim = c(-1.5, 1.5),
-         ylim = c(min(toPlot$thres, loBd) - .2, max(toPlot$thres, upBd) + .2),
-         axes = FALSE, xlab = "", ylab = "Logits", main = "KIDMAP")
-    mtext(paste0("Person: ", personID,
-                 "\nEst Theta: ", round(results$persPars[rowIndex, d], 2)),
-          side = 3, line = 0, cex = .8)
-    mtext(paste0("Raw: ", round(results$persRaw[rowIndex, d], 2), "/",
-                 round(results$persMax[rowIndex, d], 2),
-                 "\nOutfit: ", round(results$persFit[[d]]$outfit[rowIndex], 2),
-                 " (t=",round(results$persFit[[d]]$outfit_t[rowIndex], 2), ")",
-                 "\nInfit: ", round(results$persFit[[d]]$infit[rowIndex], 2),
-                 " (t=",round(results$persFit[[d]]$infit_t[rowIndex], 2), ")"),
-          side = 1, line = 2, cex = .7)
-    mtext("Reached", adj = 0)
-    mtext("Not Reached", adj = 1)
+      plot(1, type = "n", xlim = c(-1.5, 1.5),
+           ylim = c(min(toPlot$thres, loBd) - .2, max(toPlot$thres, upBd) + .2),
+           axes = FALSE, xlab = "", ylab = "Logits", main = "KIDMAP")
+      mtext(paste0("Person: ", row.names(results$scoresRecoded)[i],
+                   "\nEst Theta: ", round(results$persPars[i, d], 2)),
+            side = 3, line = 0, cex = .8)
+      mtext(paste0("Raw: ", round(results$persRaw[i, d], 2), "/",
+                   round(results$persMax[i, d], 2),
+                   "\nOutfit: ", round(results$persFit[[d]]$outfit[i], 2),
+                   " (t=",round(results$persFit[[d]]$outfit_t[i], 2), ")",
+                   "\nInfit: ", round(results$persFit[[d]]$infit[i], 2),
+                   " (t=",round(results$persFit[[d]]$infit_t[i], 2), ")"),
+            side = 1, line = 2, cex = .7)
+      mtext("Reached", adj = 0)
+      mtext("Not Reached", adj = 1)
 
-    rect(xleft = -1.5, xright = 1.5, ybottom = loBd, ytop = upBd,
-         col = color[1], border = NA)
-    rect(xleft = -1.5, xright = 0, ybottom = upBd, ytop = 100,
-         col = color[2], border = NA)
-    rect(xleft = 0, xright = 1.5, ybottom = -100, ytop = loBd,
-         col = color[2], border = NA)
+      rect(xleft = -1.5, xright = 1.5, ybottom = loBd, ytop = upBd,
+           col = color[1], border = NA)
+      rect(xleft = -1.5, xright = 0, ybottom = upBd, ytop = 100,
+           col = color[2], border = NA)
+      rect(xleft = 0, xright = 1.5, ybottom = -100, ytop = loBd,
+           col = color[2], border = NA)
 
-    abline(v = 0)
-    abline(h = results$persPars[rowIndex, d])
+      abline(v = 0)
+      abline(h = results$persPars[i, d])
 
-    axis(side = 2, at = c(seq(0, floor(min(toPlot$thres, loBd) - .2), by = -1),
-                          seq(0, ceiling(max(toPlot$thres, upBd) + .2), by = 1)),
-         las = 1)
-    axis(side = 4, at = c(seq(0, floor(min(toPlot$thres, loBd) - .2), by = -1),
-                          seq(0, ceiling(max(toPlot$thres, upBd) + .2), by = 1)),
-         las = 1)
+      axis(side = 2, at = c(seq(0, floor(min(toPlot$thres, loBd) - .2), by = -1),
+                            seq(0, ceiling(max(toPlot$thres, upBd) + .2), by = 1)),
+           las = 1)
+      axis(side = 4, at = c(seq(0, floor(min(toPlot$thres, loBd) - .2), by = -1),
+                            seq(0, ceiling(max(toPlot$thres, upBd) + .2), by = 1)),
+           las = 1)
 
-    points(x = toPlot$x, y = toPlot$thres, pch = 21, bg = color[3])
+      points(x = toPlot$x, y = toPlot$thres, pch = 21, bg = color[3])
 
-    if (sum(toPlot$x == -1) == 1) {
-      text(x = -1, y = toPlot$thres[toPlot$x == -1],
-           row.names(toPlot[toPlot$x == -1,]), pos = 4, cex = .5)
-    } else if (sum(toPlot$x == -1) > 1) {
-      text(x = -1, y = sort(toPlot$thres[toPlot$x == -1]),
-           labels = row.names(toPlot)[order(toPlot$thres)[toPlot$x == -1]],
-           pos = c(2, 4), cex = .5)
-    }
+      if (sum(toPlot$x == -1) == 1) {
+        text(x = -1, y = toPlot$thres[toPlot$x == -1],
+             row.names(toPlot[toPlot$x == -1,]), pos = 4, cex = .5)
+      } else if (sum(toPlot$x == -1) > 1) {
+        text(x = -1, y = sort(toPlot$thres[toPlot$x == -1]),
+             labels = row.names(toPlot)[order(toPlot$thres)[toPlot$x == -1]],
+             pos = c(2, 4), cex = .5)
+      }
 
-    if (sum(toPlot$x == 1) == 1) {
-      text(x = 1, y = toPlot$thres[toPlot$x == 1],
-           row.names(toPlot[toPlot$x == 1,]), pos = 2, cex = .5)
-    } else if (sum(toPlot$x == 1) > 1) {
-      text(x = 1, y = sort(toPlot$thres[toPlot$x == 1]),
-           labels = row.names(toPlot)[order(toPlot$thres)[toPlot$x == 1]],
-           pos = c(2, 4), cex = .5)
-    }
+      if (sum(toPlot$x == 1) == 1) {
+        text(x = 1, y = toPlot$thres[toPlot$x == 1],
+             row.names(toPlot[toPlot$x == 1,]), pos = 2, cex = .5)
+      } else if (sum(toPlot$x == 1) > 1) {
+        text(x = 1, y = sort(toPlot$thres[toPlot$x == 1]),
+             labels = row.names(toPlot)[order(toPlot$thres)[toPlot$x == 1]],
+             pos = c(2, 4), cex = .5)
+      }
 
-    if (writeout) {
-      dev.off()
+      if (writeout) {
+        dev.off()
+      }
     }
   }
 
