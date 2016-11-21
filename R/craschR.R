@@ -252,7 +252,8 @@ craschR <- function(scores, itemInfo = NULL, consInfo = NULL, varsInfo = NULL,
     if ( consecutive && D > 1 ) {
       persFit <- list()
       for (d in 1:D) {
-        persFit[[d]] <- data.frame(matrix(nrow = N, ncol = 4))
+        persFit[[d]] <- data.frame(matrix(nrow = N, ncol = 4),
+                                   row.names = row.names(wide))
         persFit[[d]][complete.cases(persEsts$Pars),] <-
           sirt::pcm.fit(b = -results$AXsi[which(itemInfo$cons.ID ==
                                                   consInfo$cons.ID[d]),-1],
@@ -265,7 +266,8 @@ craschR <- function(scores, itemInfo = NULL, consInfo = NULL, varsInfo = NULL,
       }
       names(persFit) <- consInfo$short.name
     } else if ( D == 1 ) {
-      persFit <- list(data.frame(matrix(nrow = N, ncol = 4)))
+      persFit <- list(data.frame(matrix(nrow = N, ncol = 4),
+                                 row.names = row.names(wide)))
       persFit[[1]][complete.cases(persEsts$Pars),] <-
         sirt::pcm.fit(b = -results$AXsi[,-1],
                       theta =
