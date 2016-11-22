@@ -119,7 +119,9 @@
 ################################################################################
 # check for items with no variability for craschR
   noVar <- function(data) {
-    as.numeric(c(which(apply(data,2,function(x) length(unique(x))) == 1)))
+    as.numeric(which(apply(data, 2, function(x) {
+      length(unique(x[!is.na(x)])) == 1
+    })))
   }
 
 ################################################################################

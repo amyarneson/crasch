@@ -73,7 +73,7 @@ item.scores <- function(results, dim = NULL, freqs = TRUE, palette = "BASS",
       tograph <- prop.table(table(scores$score, scores$item, useNA="no"),
                             margin = 2)
     }
-    dimnames(tograph) <- list(cons[4:ncol(cons)],
+    dimnames(tograph) <- list(cons[4:ncol(cons)][sort(unique(scores$score))],
                               results$itemInfo$item.name[
                 which(results$itemInfo$cons.ID == results$consInfo$cons.ID[d])])
     if (length(palette) == 1) {

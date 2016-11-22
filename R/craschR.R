@@ -229,6 +229,8 @@ craschR <- function(scores, itemInfo = NULL, consInfo = NULL, varsInfo = NULL,
             "\n")
     itemInfo = itemInfo[-dropped,]
     wide = wide[,-dropped]
+    scoresOrig = scoresOrig[,-dropped]
+    I = nrow(itemInfo)
   }
 
   # TAM estimation
