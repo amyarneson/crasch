@@ -102,7 +102,7 @@ craschR <- function(scores, itemInfo = NULL, consInfo = NULL, varsInfo = NULL,
     if ( !grepl(".csv$",scores) ) {
       stop("scores file must end with '.csv'")
     }
-    scores <- data.frame(read.csv(scores,stringsAsFactors=FALSE,row.names=1))
+    scores <- data.frame(read.csv(scores, stringsAsFactors = FALSE, row.names = 1))
   }
   if ( is.character(itemInfo) ) {
     if ( !grepl(".csv$",itemInfo) ) {
@@ -121,6 +121,20 @@ craschR <- function(scores, itemInfo = NULL, consInfo = NULL, varsInfo = NULL,
       stop("varsInfo file must end with '.csv'")
     }
     varsInfo <- data.frame(read.csv(varsInfo))
+  }
+
+  # check that all constructs are reflected in items
+  if (!(all(consInfo$cons.ID %in% itemInfo$cons.ID))) {
+    stop(paste('The construct',
+               consInfo$long.name[which(consInfo$cons.ID %in% itemInfo$cons.ID)],
+               'has no items mapped to it. \n',
+               '      Remove its row from the consInfo object.'))
+  }
+  # check that all items are mapped to a construct in consInfo
+  if (!(all(itemInfo$cons.ID %in% consInfo$cons.ID))) {
+    stop(paste('No matching cons.ID in consInfo object for item(s):\n      ',
+               paste(itemInfo$item.name[which(itemInfo$cons.ID %in% consInfo$cons.ID)],
+                     collapse = ", ")))
   }
 
   if ( estPackage == "TAM"  ) { requireNamespace("TAM", quietly = TRUE) }
