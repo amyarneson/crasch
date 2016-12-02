@@ -249,7 +249,7 @@ KIDMAP <- function(results, personID, dim = NULL, probBounds = c(.25, .75),
              row.names(toPlot[toPlot$x == -1,]), pos = 4, cex = .5)
       } else if (sum(toPlot$x == -1) > 1) {
         text(x = -1, y = sort(toPlot$thres[toPlot$x == -1]),
-             labels = row.names(toPlot)[order(toPlot$thres)[toPlot$x == -1]],
+             labels = row.names(toPlot)[toPlot$x == -1][order(toPlot$thres[toPlot$x == -1])],
              pos = c(2, 4), cex = .5)
       }
 
@@ -258,7 +258,7 @@ KIDMAP <- function(results, personID, dim = NULL, probBounds = c(.25, .75),
              row.names(toPlot[toPlot$x == 1,]), pos = 2, cex = .5)
       } else if (sum(toPlot$x == 1) > 1) {
         text(x = 1, y = sort(toPlot$thres[toPlot$x == 1]),
-             labels = row.names(toPlot)[order(toPlot$thres)[toPlot$x == 1]],
+             labels = row.names(toPlot)[toPlot$x == 1][order(toPlot$thres[toPlot$x == 1])],
              pos = c(2, 4), cex = .5)
       }
 
