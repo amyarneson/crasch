@@ -193,7 +193,7 @@ infit.MNSQ <- function(results, itemOrder = NULL, params = "items",
     stop('Invalid params argument.')
   }
   # error if all items are dichotomous
-    if (ncol(results$itemPars) == 1) {
+    if (ncol(results$itemPars) == 1 & params == "steps") {
       stop('All items are dichotomous. There are no step parameters. Use params="items".')
     }
 
