@@ -70,13 +70,13 @@ TAM.items <- function(TAMresults, itemInfo) {
 
   # for polytomous data
   if ( maxK > 2 ) {
-    itemPars <- itemSEs <- matrix(ncol=I,nrow=maxK) #will transpose later
+    itemPars <- itemSEs <- matrix(ncol = I, nrow = maxK) #will transpose later
     # fill in the step parameters
     # the $item object from TAM output will help to figure out which cells
     #    need to be filled in
-    fill = !is.na(TAMresults$item[,5:(3+maxK)])
+    fill = !is.na(TAMresults$item[,5:(3 + maxK)])
     # remove last TRUE from each row (since that parameter is constrained)
-    fill = apply(fill,1, function(x) {
+    fill = apply(fill, 1, function(x) {
       x[max(which(x))] = FALSE
       x
     })
@@ -118,9 +118,11 @@ TAM.items <- function(TAMresults, itemInfo) {
     itemSEs <- as.matrix(TAMresults$xsi[,2])
     colnames(itemSEs) = c("SE_d")
 
-    itemThres <- matrix(WrightMap::make.thresholds(itemPars[,1]),nrow=I,ncol=1)
+    itemThres <- as.matrix(WrightMap::make.thresholds(itemPars[,1]), nrow = I,
+                           ncol = 1)
     colnames(itemThres) = c("tt_1")
-    rownames(itemThres) = rownames(itemPars)
+
+    row.names(itemThres) <- row.names(itemSEs) <- row.names(itemPars) <- row.names(TAMresults$xsi)
   }
 
   return(list(Pars = itemPars,

@@ -181,7 +181,7 @@ KIDMAP <- function(results, personID, dim = NULL, probBounds = c(.25, .75),
 
   for (d in D) {
     inclItem <- which(results$itemInfo$cons.ID == results$consInfo$cons.ID[d])
-    thres <- results$itemThres[inclItem,]
+    thres <- as.matrix(results$itemThres[inclItem,])
 
     for (i in rowIndex) {
       respVector <- as.numeric(results$scoresRecoded[i,])
