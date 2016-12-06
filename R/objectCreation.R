@@ -199,7 +199,7 @@ empty.cats <- function(wide,
   item.list = list()
 
   for (i in 1:I) {
-    item.list[[i]] <- which(!which(itemScoreInfo[,i]) %in% wide[,i])
+    item.list[[i]] <- which(itemScoreInfo[,i])[!(which(itemScoreInfo[,i]) %in% unique(wide[,i]))]
   }
 
   return(item.list)
