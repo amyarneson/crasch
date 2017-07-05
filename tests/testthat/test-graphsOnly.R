@@ -12,6 +12,8 @@ AMY <- craschR(scores = AMYwide, itemInfo = AMYitem, consInfo = AMYcons,
                consecutive = TRUE, writeout = FALSE)
 DI <- craschR(scores = DIwide, itemInfo = DIitem, consInfo = DIcons,
               estPackage = "TAM", retainOrig = TRUE, writeout = FALSE)
+# Note that ADM3analysis and ADM3consecutive need to be updated any time craschR() code changes!
+# They take ~4 min each to run
 
 test_that("pers.hist produces expected errors", {
   # invalid dimension specified
@@ -24,6 +26,10 @@ test_that("pers.hist with different argument combinations", {
   pers.hist(AMY, dim = 1)
   pers.hist(SUP, palette = "PuBu")
   pers.hist(SUP, palette = c("pink", "green"))
+  pers.hist(ADM3analysis, dim = 3)
+  pers.hist(ADM3consecutive, dim = 3)
+  pers.hist(ADM3analysis)
+  pers.hist(ADM3consecutive)
 })
 
 test_that("KIDMAP produces expected errors", {
@@ -36,6 +42,8 @@ test_that("KIDMAP produces expected errors", {
   expect_error(KIDMAP(SUP, personID = 112, probBounds = c(.8, .2)),
                "Invalid probBounds argument.")
   expect_error(KIDMAP(SUP, personID = 112, palette = "red"))
+  expect_error(KIDMAP(ADM3analysis, personID = 101, dim = 1),
+               "Person fit statistics are not available for non-consecutive multi-dimensional analyses using TAM.\n  KIDMAP not available.")
 })
 
 test_that("KIDMAP w/different argument combinations", {
@@ -44,6 +52,7 @@ test_that("KIDMAP w/different argument combinations", {
   KIDMAP(AMY, personID = "112")
   KIDMAP(AMY, personID = 112)
   KIDMAP(SUP, personID = 112, palette = c("lightgreen", "lightpink", "black"))
+  KIDMAP(ADM3consecutive, personID = 101, dim = 1)
 })
 
 test_that("infit.MNSQ produces expected errors", {
@@ -110,6 +119,7 @@ test_that("info.graph produces expected errors", {
   expect_error(info.graph(AMY, dim = 6, type = "TIC"), 'Invalid dim argument.')
   expect_error(info.graph(SUP, thetaGrid = NULL), 'Invalid thetaGrid argument.')
   expect_error(info.graph(SUP, type = "item"), 'Invalid type argument.')
+  expect_error(info.graph(ADM3analysis), 'nformation curves only available for unidimensional (or consecutive) analyses.')
 })
 
 test_that("info.graph produces expected warnings", {

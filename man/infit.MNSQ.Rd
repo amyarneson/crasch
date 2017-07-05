@@ -42,4 +42,3 @@ One or more plots of the infit mean squares with "acceptable" region
 \description{
 Plots in infit mean sqare statistics from \code{craschR} output.
 }
-

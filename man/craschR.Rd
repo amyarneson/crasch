@@ -113,4 +113,3 @@ A list with the following entries
 \description{
 Item and person estimates and fit statistics.
 }
-

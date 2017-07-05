@@ -20,4 +20,3 @@ The split-halves reliability coefficient.
 \description{
 Calculates the split halves reliability coefficient.
 }
-

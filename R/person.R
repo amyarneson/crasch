@@ -135,6 +135,9 @@ KIDMAP <- function(results, personID, dim = NULL, probBounds = c(.25, .75),
                    palette = "BASS", writeout = FALSE, imageType = "pdf",
                    fileSuffix = NULL) {
   checkResults(results)
+  if (!results$estSummary$consecutive & results$estSummary$D > 1) {
+    stop('Person fit statistics are not available for non-consecutive multi-dimensional analyses using TAM.\n  KIDMAP not available.')
+  }
   checkWrite(writeout, fileSuffix)
   checkImageType(imageType)
   checkDim(dim, results$consInfo)
@@ -213,7 +216,8 @@ KIDMAP <- function(results, personID, dim = NULL, probBounds = c(.25, .75),
            ylim = c(min(toPlot$thres, loBd) - .2, max(toPlot$thres, upBd) + .2),
            axes = FALSE, xlab = "", ylab = "Logits", main = "KIDMAP")
       mtext(paste0("Person: ", row.names(results$scoresRecoded)[i],
-                   "\nEst Theta: ", round(results$persPars[i, d], 2)),
+                   "\nEst Theta (", results$consInfo$short.name[d], "): ",
+                   round(results$persPars[i, d], 2)),
             side = 3, line = 0, cex = .8)
       mtext(paste0("Raw: ", round(results$persRaw[i, d], 2), "/",
                    round(results$persMax[i, d], 2),

@@ -12,6 +12,8 @@ AMY <- craschR(scores = AMYwide, itemInfo = AMYitem, consInfo = AMYcons,
                consecutive = TRUE, writeout = FALSE)
 DI <- craschR(scores = DIwide, itemInfo = DIitem, consInfo = DIcons,
               estPackage = "TAM", retainOrig = TRUE, writeout = FALSE)
+# Note that ADM3analysis and ADM3consecutive need to be updated any time craschR() code changes!
+# They take ~4 min each to run
 
 test_that("item.analysis calculates correct output", {
   # table 1 - overall items

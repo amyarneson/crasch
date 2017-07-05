@@ -19,4 +19,3 @@ AMYwide
 The response data (scores) for the items aligned to the Support construct
 }
 \keyword{datasets}
-

@@ -22,4 +22,3 @@ The split-halves reliability coefficient.
 \description{
 Calculates Spearman's rho for fully dichotomous, unidimensional data.
 }
-

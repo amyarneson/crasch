@@ -38,7 +38,8 @@ item.analysis <- function(results, writeout = FALSE, fileSuffix= NULL) {
 
   #byStep table for PCM
   if (ncol(results$itemThres) > 1) {
-    K_total = sum(colSums(results$itemInfo[,6:ncol(results$itemInfo)]))
+    K_total = sum(colSums(results$itemInfo[,6:ncol(results$itemInfo)],
+                          na.rm = TRUE))
     byStep = data.frame(Item = vector(mode = "character", length = K_total),
                         Construct = vector(mode = "character", length = K_total),
                         Cat = vector(mode = "character", length = K_total),
@@ -55,7 +56,8 @@ item.analysis <- function(results, writeout = FALSE, fileSuffix= NULL) {
     start <- 1
     for (i in 1:results$estSummary$I) {
       cons = which(results$consInfo$cons.ID == results$itemInfo$cons.ID[i]) # row index
-      K_i = sum(as.logical(results$itemInfo[i, 6:ncol(results$itemInfo)]))
+      K_i = sum(as.logical(results$itemInfo[i, 6:ncol(results$itemInfo)]),
+                na.rm = TRUE)
       fill = c(start:(start + K_i - 1))
       # item, construct, and category (construct specific) names
       byStep$Item[fill] = rep(results$itemInfo$item.name[i], K_i)
@@ -78,8 +80,8 @@ item.analysis <- function(results, writeout = FALSE, fileSuffix= NULL) {
       byStep$Threshold[fill[-1]] = results$itemThres[i,1:(length(fill) - 1)]
       # point biserials
       byStep$PtBiserial[fill] = sapply(fill,function(x) {
-        -ltm::biserial.cor(persProp[!is.na(results$scoresRecoded[,i]),cons],
-                           results$scoresRecoded[!is.na(results$scoresRecoded[,i]),i]==byStep$Score[x])
+        -ltm::biserial.cor(persProp[!is.na(results$scoresRecoded[, i]), cons],
+                           results$scoresRecoded[!is.na(results$scoresRecoded[,i]),i] == byStep$Score[x])
       })
       # person locations
       byStep$MeanPersLoc[fill] = sapply(fill,function(x) {

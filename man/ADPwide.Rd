@@ -19,4 +19,3 @@ ADPwide
 The response data (scores) for the items aligned to the Adoption construct
 }
 \keyword{datasets}
-

@@ -35,4 +35,3 @@ ADPitem
 The required item information for the Adoption data
 }
 \keyword{datasets}
-

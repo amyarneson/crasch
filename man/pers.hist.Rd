@@ -41,4 +41,3 @@ Plots one histogram for each dimension.
 \description{
 Create a histogram of person estimates.
 }
-

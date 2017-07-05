@@ -43,4 +43,3 @@ Wright Map graphic (multiple graphics will be produced if you have
 \description{
 A wrapper for the wrightMap() function from the WrightMap package.
 }
-

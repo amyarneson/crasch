@@ -39,4 +39,3 @@ A list containing matrices of the mean location estimates by score
 \description{
 Returns and plots the mean location trajectories by category per item.
 }
-

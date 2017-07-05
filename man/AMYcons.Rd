@@ -25,4 +25,3 @@ AMYcons
 The required construct information for the Adoption & Support data
 }
 \keyword{datasets}
-

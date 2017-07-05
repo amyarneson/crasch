@@ -48,4 +48,3 @@ KIDMAP plot for specified person.
 \description{
 Plots a KIDMAP for a given person and construct.
 }
-

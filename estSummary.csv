@@ -1,0 +1,16 @@
+"","V1"
+"estPackage",TAM
+"consecutive",FALSE
+"IRTmodel",PCM
+"startTime",Wed Jul  5 15:09:32 2017
+"endTime",Wed Jul  5 15:12:26 2017
+"N",285
+"I",32
+"D",3
+"numIter",54
+"numIntPoints",9261
+"deviance",10342.2175751554
+"AIC",10546.2175751554
+"BIC",10918.7714715428
+"missingDataPerc",40.734649122807
+"persMethod",EAP

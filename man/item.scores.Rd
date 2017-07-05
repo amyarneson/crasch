@@ -52,4 +52,3 @@ Creates a stacked bar plot and returns a list with the following
 \description{
 Create a stacked bar graph showing score level frequencies per item.
 }
-

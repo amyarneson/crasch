@@ -30,4 +30,3 @@ AMYvars
 Values of external variables that were measured in the SUP/ADP study
 }
 \keyword{datasets}
-

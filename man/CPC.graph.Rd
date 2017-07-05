@@ -51,4 +51,3 @@ One plot for each item is created.
 \description{
 Plots the cumulative probability curves from \code{craschR} output.
 }
-

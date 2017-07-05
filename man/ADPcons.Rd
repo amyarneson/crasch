@@ -25,4 +25,3 @@ ADPcons
 The required construct information for the Adoption data
 }
 \keyword{datasets}
-

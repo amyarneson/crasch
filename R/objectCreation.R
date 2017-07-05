@@ -157,7 +157,7 @@ TAM.pers <- function(TAMresults, data, itemInfo, itemThres, consInfo,
   colnames(persSEs) = c(paste0("SE_",as.character(consInfo$short.name)))
   rownames(persPars) <- rownames(persSEs) <- rownames(data)
   # raw scores
-  if ( consecutive && D > 1 ) {
+  if ( D > 1 ) {
     persRaw <- persMax <- data.frame(matrix(nrow=N,ncol=D))
     for ( d in 1:D ) {
       persRaw[,d] = sum.scores(data[,which(itemInfo$cons.ID == consInfo$cons.ID[d])],

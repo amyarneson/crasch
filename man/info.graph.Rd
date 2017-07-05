@@ -48,4 +48,3 @@ A plot of the specified test information curve.  (Note: if you want
 \description{
 Plots the standard error of measurement or test information function.
 }
-

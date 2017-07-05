@@ -39,4 +39,3 @@ One plot for each item is created.
 Plots the item characteristic curves (or category characteristic curves, if
 polytomous) from \code{craschR} output.
 }
-

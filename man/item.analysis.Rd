@@ -27,4 +27,3 @@ A list with the following entries:
 \description{
 Creates item analysis tables.
 }
-
