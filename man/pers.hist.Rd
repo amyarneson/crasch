@@ -4,8 +4,8 @@
 \alias{pers.hist}
 \title{Create a histogram of person estimates.}
 \usage{
-pers.hist(results, dim = NULL, palette = "BASS", writeout = FALSE,
-  imageType = "pdf", fileSuffix = NULL, ...)
+pers.hist(results, dim = NULL, palette = "BASS", normal = FALSE,
+  writeout = FALSE, imageType = "pdf", fileSuffix = NULL, ...)
 }
 \arguments{
 \item{results}{The output from a run of \code{craschR}. (link?)}
@@ -18,6 +18,9 @@ will be produced.}
 RColorBrewer palette name (the first 2 colors of the 3-color palette will
 be used). Can also specify a vector with 2 colors in any R-supported form;
 the first color is for the bars and the second is for the normal curve.}
+
+\item{normal}{A logical incating whether to include the normal curve overlaid
+on the plot. The estimated mean and variance define the curve.}
 
 \item{writeout}{A logical indicating whether the graph should be written to
 your working directory as your indicated \code{imageType}.  If \code{TRUE},

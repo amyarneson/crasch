@@ -9,6 +9,8 @@
 #'   RColorBrewer palette name (the first 2 colors of the 3-color palette will
 #'   be used). Can also specify a vector with 2 colors in any R-supported form;
 #'   the first color is for the bars and the second is for the normal curve.
+#' @param normal A logical incating whether to include the normal curve overlaid
+#'   on the plot. The estimated mean and variance define the curve.
 #' @param writeout A logical indicating whether the graph should be written to
 #'   your working directory as your indicated \code{imageType}.  If \code{TRUE},
 #'   the file name will begin \code{pershist} and will include an index (if more
@@ -26,7 +28,7 @@
 #'
 #' @export
 
-pers.hist <- function(results, dim = NULL, palette = "BASS",
+pers.hist <- function(results, dim = NULL, palette = "BASS", normal = FALSE,
                       writeout = FALSE, imageType = "pdf", fileSuffix = NULL,
                       ...) {
   checkResults(results)
@@ -86,7 +88,10 @@ pers.hist <- function(results, dim = NULL, palette = "BASS",
          labels = FALSE)
     axis(2, las = 1)
     Hmisc::minor.tick(nx = 1, ny = 2, tick.ratio = 1)
-    lines(x, y, col = color[2], lty = 2, lwd = 2) # add normal curve
+
+    if (normal) {
+      lines(x, y, col = color[2], lty = 2, lwd = 2) # add normal curve
+    }
 
     if (writeout) {
       dev.off()
