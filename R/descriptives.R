@@ -108,7 +108,7 @@ item.scores <- function(results, dim = NULL, freqs = TRUE, palette = "BASS",
     tables[[which(D==d)]] <- table.temp
 
     if (writeout) {
-      if (D==1) {
+      if (length(D) == 1) {
         dd = NULL
       } else {
         dd = d

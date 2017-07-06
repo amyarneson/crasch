@@ -63,19 +63,26 @@ pers.hist <- function(results, dim = NULL, palette = "BASS", normal = FALSE,
 
   for (d in D) {
     h <- hist(results$persPars[,d], plot = FALSE)
-    x <- seq(min(results$persPars[,d]), max(results$persPars[,d]), length = 200)
-    y <- dnorm(x, mean = results$popDist$mean[d],
-               sd = sqrt(results$popDist$var.cov[d,d])) * diff(h$mids[1:2]) *
-      nrow(results$persPars)
+
+    if (normal) {
+      x <- seq(min(results$persPars[,d]), max(results$persPars[,d]),
+               length = 200)
+      y <- dnorm(x, mean = results$popDist$mean[d],
+                 sd = sqrt(results$popDist$var.cov[d,d])) * diff(h$mids[1:2]) *
+        nrow(results$persPars)
+    } else {
+      x <- h$breaks
+      y <- h$counts
+    }
 
     if (writeout) {
-      if (D==1) {
+      if (length(D) == 1) {
         dd = NULL
       } else {
         dd = d
       }
       graphout = paste0("pershist", dd, fileSuffix, ".", imageType)
-      eval(parse(text=paste0(imageType,"('",graphout,"')")))
+      eval(parse(text = paste0(imageType, "('", graphout, "')")))
     }
 
     hist(results$persPars[,d], main = results$consInfo$short.name[d],
