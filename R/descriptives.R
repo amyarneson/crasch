@@ -73,9 +73,11 @@ item.scores <- function(results, dim = NULL, freqs = TRUE, palette = "BASS",
       tograph <- prop.table(table(scores$score, scores$item, useNA="no"),
                             margin = 2)
     }
-    dimnames(tograph) <- list(cons[4:ncol(cons)][sort(unique(scores$score))],
-                              results$itemInfo$item.name[
-                which(results$itemInfo$cons.ID == results$consInfo$cons.ID[d])])
+    colnames(tograph) <-results$itemInfo$item.name[which(
+      results$itemInfo$cons.ID == results$consInfo$cons.ID[d])]
+    #dimnames(tograph) <- list(cons[4:ncol(cons)][sort(unique(scores$score))],
+    #                          results$itemInfo$item.name[
+    #            which(results$itemInfo$cons.ID == results$consInfo$cons.ID[d])])
     if (length(palette) == 1) {
       if ( palette %in% row.names(brewer.pal.info) ) {
         # check that there are enough colors in palette
@@ -100,12 +102,14 @@ item.scores <- function(results, dim = NULL, freqs = TRUE, palette = "BASS",
     table.temp <- list(counts = t(tograph),
                        proportions = t(prop.table(tograph, margin = 2)))
     # replace 0 counts with NAs if level was not possible for that item
-    table.temp[[1]][!results$itemInfo[results$itemInfo$cons.ID == cons$cons.ID,
-                                      6:ncol(results$itemInfo)]] = NA
-    table.temp[[2]][!results$itemInfo[results$itemInfo$cons.ID == cons$cons.ID,
-                                      6:ncol(results$itemInfo)]] = NA
+    replaceCells <- results$itemInfo[match(rownames(table.temp[[1]]),
+                                           results$itemInfo$item.name),
+                     as.numeric(colnames(table.temp[[1]])) + 5]
 
-    tables[[which(D==d)]] <- table.temp
+    table.temp[[1]] <- table.temp[[1]] / (replaceCells*1)
+    table.temp[[2]] <- table.temp[[2]] / (replaceCells*1)
+
+    tables[[which(D == d)]] <- table.temp
 
     if (writeout) {
       if (length(D) == 1) {
