@@ -118,13 +118,13 @@ mn.traj <- function(results, itemOrder = NULL,
     for (i in which(inclItems)) {
       meanLocs[j,] <- sapply(0:(sum(as.matrix(itemInfo[i, 6:ncol(itemInfo)])) - 1),
                                function(x) {
-        mean(results$persPars[scoresRecoded[!is.na(scoresRecoded[,i]), i] == x, d],
+        mean(results$persPars[scoresRecoded[, i] == x, d],
              na.rm = TRUE)
       })[1:ncol(meanLocs)]
 
       sdLocs[j,] <- sapply(0:(sum(as.matrix(itemInfo[i, 6:ncol(itemInfo)])) - 1),
                            function(x) {
-        sd(results$persPars[scoresRecoded[!is.na(scoresRecoded[,i]), i] == x, d],
+        sd(results$persPars[scoresRecoded[, i] == x, d],
            na.rm = TRUE)
       })[1:ncol(meanLocs)]
       j = j + 1
