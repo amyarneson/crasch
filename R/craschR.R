@@ -238,7 +238,7 @@ craschR <- function(scores, itemInfo = NULL, consInfo = NULL, varsInfo = NULL,
     Q <- as.matrix(table(ordered(itemInfo$item.ID,levels=itemInfo$item.ID),
                    ordered(itemInfo$cons.ID,levels=consInfo$cons.ID)))
     colnames(Q) = consInfo$short.name[consInfo$cons.ID==as.numeric(colnames(Q))]
-    rownames(Q) = itemInfo$item.name[itemInfo$item.ID==as.numeric(rownames(Q))]
+    rownames(Q) = itemInfo$item.name#[itemInfo$item.ID==as.numeric(rownames(Q))]
 
     if ( consecutive ) {
       # anchor covariance between any two dimensions to 0
