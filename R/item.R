@@ -85,11 +85,11 @@ item.analysis <- function(results, writeout = FALSE, fileSuffix= NULL) {
       })
       # person locations
       byStep$MeanPersLoc[fill] = sapply(fill,function(x) {
-        mean(results$persPars[results$scoresRecoded[!is.na(results$scoresRecoded[,i]), i] == byStep$Score[x], cons],
+        mean(results$persPars[results$scoresRecoded[, i] == byStep$Score[x], cons],
              na.rm = TRUE)
       })
       byStep$SD_PersLoc[fill] = sapply(fill,function(x) {
-        sd(results$persPars[results$scoresRecoded[!is.na(results$scoresRecoded[,i]), i] == byStep$Score[x], cons],
+        sd(results$persPars[results$scoresRecoded[, i] == byStep$Score[x], cons],
            na.rm = TRUE)
       })
 
