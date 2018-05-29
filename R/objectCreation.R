@@ -74,7 +74,7 @@ TAM.items <- function(TAMresults, itemInfo) {
     # fill in the step parameters
     # the $item object from TAM output will help to figure out which cells
     #    need to be filled in
-    fill = !(TAMresults$item[,5:(3 + maxK)] == 0)
+    fill = !is.na(TAMresults$item[,5:(3 + maxK)])
     # remove last TRUE from each row (since that parameter is constrained)
     fill = apply(fill, 1, function(x) {
       x[max(which(x))] = FALSE
