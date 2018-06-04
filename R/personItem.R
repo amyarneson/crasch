@@ -390,6 +390,7 @@ wm <- function(results, dim = NULL, byCat = FALSE, palette = "BASS",
               return.thresholds = FALSE)
 
     thresReturn[[i]] <- thres
+    colnames(thresReturn[[i]]) = results$itemInfo$item.name[thresList[[i]]]
 
     if (writeout) {
       dev.off()
