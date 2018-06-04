@@ -394,7 +394,7 @@ wm <- function(results, dim = NULL, byCat = FALSE, palette = "BASS",
   }
 
   par(origPar)
-  return(thres)
+  return(thresList)
 }
 
 
