@@ -318,6 +318,7 @@ wm <- function(results, dim = NULL, byCat = FALSE, palette = "BASS",
   } else {
     stop('Invalide palette argument.')
   }
+  thresReturn <- list()
 
   for (i in 1:length(thresList)) {
 
@@ -388,13 +389,15 @@ wm <- function(results, dim = NULL, byCat = FALSE, palette = "BASS",
               thr.lab.pos = thresPos,
               return.thresholds = FALSE)
 
+    thresReturn[[i]] <- thres
+
     if (writeout) {
       dev.off()
     }
   }
 
   par(origPar)
-  return(thresList)
+  return(thresReturn)
 }
 
 
